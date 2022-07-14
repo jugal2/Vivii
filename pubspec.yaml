@@ -39,6 +39,7 @@ dependencies:
   pin_code_fields: ^7.4.0
   alt_sms_autofill: ^1.0.0
   introduction_slider: ^1.0.0
+  font_awesome_flutter: ^10.1.0
 
 dev_dependencies:
   flutter_test:

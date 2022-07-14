@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:vivii/Screens/AuthenticationModule/LoginPage.dart';
-import 'package:vivii/Screens/OnBoardingModule/OnBoardingPage.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,7 +14,7 @@ class MyApp extends StatelessWidget {
     return const MaterialApp(
       title: 'Vivii',
       debugShowCheckedModeBanner: false,
-      home: OnBoardingPage(),
+      home: LoginPage(),
     );
   }
 }

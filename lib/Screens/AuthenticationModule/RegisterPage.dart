@@ -23,9 +23,9 @@ class _RegisterPageState extends State<RegisterPage> {
           physics: BouncingScrollPhysics(),
           children: [
             Padding(
-              padding: const EdgeInsets.only(left: 40.0, top: 150),
+              padding: const EdgeInsets.only(left: 30.0, top: 50),
               child: Text(
-                "Register,",
+                "Create Account",
                 style: GoogleFonts.nunito(
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
@@ -33,55 +33,116 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 40.0),
+              padding: const EdgeInsets.only(left: 30.0, top: 10),
               child: Text(
-                "Fill The Details Below.",
+                "Connect with your friends today!",
                 style: GoogleFonts.nunito(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20),
+                    color: Colors.grey.shade500, fontSize: 15),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 40.0, top: 10),
-              child: Row(
-                children: [
-                  Text(
-                    "If you are already a customer /",
-                    style: GoogleFonts.nunito(
-                        color: Colors.grey.shade500, fontSize: 16),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => LoginPage()));
-                    },
-                    child: Text(
-                      " Sign in",
-                      style:
-                          GoogleFonts.nunito(color: Colors.black, fontSize: 16),
+              padding: const EdgeInsets.only(left: 30.0, top: 40),
+              child: Text(
+                "Full Name",
+                style: GoogleFonts.nunito(color: Colors.black, fontSize: 15),
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.only(left: 30, right: 30, top: 10),
+              height: 50,
+              child: TextField(
+                style: GoogleFonts.nunito(),
+                cursorColor: Colors.black,
+                decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(
+                        color: Colors.black,
+                        width: 1,
+                      ),
                     ),
-                  ),
-                ],
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: HexColor("ebebed")),
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: HexColor("ebebed")),
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    contentPadding: EdgeInsets.only(
+                        left: 15, bottom: 11, top: 11, right: 15),
+                    hintStyle: GoogleFonts.nunito()),
+              ),
+            ),
+            //////////////////////////
+            Padding(
+              padding: const EdgeInsets.only(left: 30.0, top: 20),
+              child: Text(
+                "Mobile  Number",
+                style: GoogleFonts.nunito(color: Colors.black, fontSize: 15),
               ),
             ),
             Container(
-              margin: EdgeInsets.only(left: 40, right: 40, top: 30),
+              margin: EdgeInsets.only(left: 30, right: 30, top: 10),
               height: 50,
-              child: Text("Name"),
-              color: HexColor("fece84"),
+              child: TextField(
+                style: GoogleFonts.nunito(),
+                cursorColor: Colors.black,
+                decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(
+                        color: Colors.black,
+                        width: 1,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: HexColor("ebebed")),
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: HexColor("ebebed")),
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    contentPadding: EdgeInsets.only(
+                        left: 15, bottom: 11, top: 11, right: 15),
+                    hintStyle: GoogleFonts.nunito()),
+              ),
+            ),
+            //////////////////////////
+            Padding(
+              padding: const EdgeInsets.only(left: 30.0, top: 20),
+              child: Text(
+                "Email Address",
+                style: GoogleFonts.nunito(color: Colors.black, fontSize: 15),
+              ),
             ),
             Container(
-              margin: EdgeInsets.only(left: 40, right: 40, top: 20),
+              margin: EdgeInsets.only(left: 30, right: 30, top: 10),
               height: 50,
-              child: Text("Contact"),
-              color: HexColor("fece84"),
-            ),
-            Container(
-              margin: EdgeInsets.only(left: 40, right: 40, top: 20),
-              height: 50,
-              child: Text("Email"),
-              color: HexColor("fece84"),
+              child: TextField(
+                style: GoogleFonts.nunito(),
+                cursorColor: Colors.black,
+                decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(
+                        color: Colors.black,
+                        width: 1,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: HexColor("ebebed")),
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: HexColor("ebebed")),
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    contentPadding: EdgeInsets.only(
+                        left: 15, bottom: 11, top: 11, right: 15),
+                    hintStyle: GoogleFonts.nunito()),
+              ),
             ),
             GestureDetector(
               onTap: () {
@@ -89,24 +150,42 @@ class _RegisterPageState extends State<RegisterPage> {
                     MaterialPageRoute(builder: (context) => OTPPage()));
               },
               child: Container(
-                margin: EdgeInsets.only(left: 40, right: 40, top: 60),
-                height: 60,
-                child: Text("Submit"),
-                color: HexColor("8bcac1"),
+                decoration: BoxDecoration(
+                    color: HexColor("00726d"),
+                    borderRadius: BorderRadius.circular(10)),
+                margin: EdgeInsets.only(left: 30, right: 30, top: 60),
+                height: 50,
+                child: Center(
+                    child: Text(
+                  "Sign Up",
+                  style: GoogleFonts.nunito(fontSize: 17, color: Colors.white),
+                )),
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  margin: EdgeInsets.only(top: 30),
-                  child: Text(
-                    "Skip Now",
+            Padding(
+              padding: const EdgeInsets.only(left: 30.0, top: 30),
+              child: Row(
+                children: [
+                  Text(
+                    "Already have an account?",
                     style: GoogleFonts.nunito(
-                        color: Colors.grey.shade700, fontSize: 16),
+                        color: Colors.grey.shade500, fontSize: 16),
                   ),
-                ),
-              ],
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => RegisterPage()));
+                    },
+                    child: Text(
+                      " Login",
+                      style: GoogleFonts.nunito(
+                          color: HexColor("00726d"), fontSize: 16),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
