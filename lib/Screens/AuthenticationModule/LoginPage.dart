@@ -1,8 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:vivii/Screens/AuthenticationModule/OTPPage.dart';
 import 'package:vivii/Screens/AuthenticationModule/RegisterPage.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:vivii/globals.dart' as global;
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
+
+void configLoading() {
+  EasyLoading.instance
+    ..displayDuration = const Duration(milliseconds: 2000)
+    ..indicatorType = EasyLoadingIndicatorType.foldingCube
+    ..loadingStyle = EasyLoadingStyle.light
+    ..indicatorSize = 45.0
+    ..radius = 10.0
+    ..progressColor = Colors.yellow
+    ..backgroundColor = Colors.green
+    ..indicatorColor = Colors.yellow
+    ..textColor = Colors.yellow
+    ..maskColor = Colors.blue.withOpacity(0.5)
+    ..userInteractions = false
+    ..dismissOnTap = false;
+  //..customAnimation = CustomAnimation();
+}
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -12,33 +35,79 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final mobileController = TextEditingController();
+
+  Future<void> userLogin() async {
+    configLoading();
+    EasyLoading.show(status: 'Loading...');
+
+    var user_login_url = global.api_base_url + "login";
+    var res = await http.post(Uri.parse(user_login_url), headers: {
+      "Accept": "application/json"
+    }, body: {
+      "secrete": "dacb465d593bd139a6c28bb7289fa798",
+      "contact": mobileController.text,
+    });
+    var resp = json.decode(res.body);
+    if (resp['status'] == 0) {
+      EasyLoading.dismiss();
+      var snackBar = SnackBar(
+        elevation: 0,
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: Colors.transparent,
+        content: AwesomeSnackbarContent(
+          title: 'On Snap!',
+          message: resp['message'],
+          contentType: ContentType.failure,
+        ),
+      );
+
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      /* Toast.show(resp['message'], context,
+          duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);*/
+    } else {
+      EasyLoading.dismiss();
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => OTPPage(
+                    mobile_no: mobileController.text,
+                  )));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
-        bottomSheet: Padding(
-          padding: const EdgeInsets.only(bottom: 30),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                "Don't have an account?",
-                style: GoogleFonts.nunito(
-                    color: Colors.grey.shade500, fontSize: 16),
-              ),
-              GestureDetector(
-                onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => RegisterPage()));
-                },
-                child: Text(
-                  " Sign Up",
+        bottomSheet: Container(
+          color: Colors.white,
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 30),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "Don't have an account?",
                   style: GoogleFonts.nunito(
-                      color: HexColor("00726d"), fontSize: 16),
+                      color: Colors.grey.shade500, fontSize: 16),
                 ),
-              ),
-            ],
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => RegisterPage()));
+                  },
+                  child: Text(
+                    " Sign Up",
+                    style: GoogleFonts.nunito(
+                        color: HexColor("00726d"), fontSize: 16),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
         backgroundColor: Colors.white,
@@ -75,8 +144,13 @@ class _LoginPageState extends State<LoginPage> {
               margin: EdgeInsets.only(left: 30, right: 30, top: 10),
               height: 50,
               child: TextField(
+                controller: mobileController,
                 style: GoogleFonts.nunito(),
                 cursorColor: Colors.black,
+                keyboardType: TextInputType.phone,
+                inputFormatters: [
+                  LengthLimitingTextInputFormatter(10),
+                ],
                 decoration: InputDecoration(
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
@@ -100,12 +174,22 @@ class _LoginPageState extends State<LoginPage> {
             ),
             GestureDetector(
               onTap: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => LoginPage()));
+                // Navigator.push(context,
+                //     MaterialPageRoute(builder: (context) => OtpPage()));
+                setState(() {
+                  if (mobileController.text.isEmpty ||
+                      (mobileController.text.length != 10)) {
+                    /*Toast.show('Please Enter Valid Mobile Number!', context,
+                          duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);*/
+                  } else {
+                    // print("log in api call start");
+                    userLogin();
+                  }
+                });
               },
               child: Container(
                 decoration: BoxDecoration(
-                    color: HexColor("00726d"),
+                    color: HexColor(global.primary_color),
                     borderRadius: BorderRadius.circular(10)),
                 margin: EdgeInsets.only(left: 30, right: 30, top: 60),
                 height: 50,
