@@ -17,6 +17,30 @@ class _LoginPageState extends State<LoginPage> {
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
+        bottomSheet: Padding(
+          padding: const EdgeInsets.only(bottom: 30),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "Don't have an account?",
+                style: GoogleFonts.nunito(
+                    color: Colors.grey.shade500, fontSize: 16),
+              ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => RegisterPage()));
+                },
+                child: Text(
+                  " Sign Up",
+                  style: GoogleFonts.nunito(
+                      color: HexColor("00726d"), fontSize: 16),
+                ),
+              ),
+            ],
+          ),
+        ),
         backgroundColor: Colors.white,
         body: ListView(
           shrinkWrap: true,
@@ -92,7 +116,7 @@ class _LoginPageState extends State<LoginPage> {
                 )),
               ),
             ),
-            Padding(
+            /*   Padding(
               padding: const EdgeInsets.only(left: 30.0, top: 30),
               child: Row(
                 children: [
@@ -114,7 +138,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ],
               ),
-            ),
+            ),*/
           ],
         ),
       ),

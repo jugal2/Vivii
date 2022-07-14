@@ -17,6 +17,30 @@ class _RegisterPageState extends State<RegisterPage> {
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
+        bottomSheet: Padding(
+          padding: const EdgeInsets.only(bottom: 30),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "Already have an account?",
+                style: GoogleFonts.nunito(
+                    color: Colors.grey.shade500, fontSize: 16),
+              ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => LoginPage()));
+                },
+                child: Text(
+                  " Login",
+                  style: GoogleFonts.nunito(
+                      color: HexColor("00726d"), fontSize: 16),
+                ),
+              ),
+            ],
+          ),
+        ),
         backgroundColor: Colors.white,
         body: ListView(
           shrinkWrap: true,
@@ -162,7 +186,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 )),
               ),
             ),
-            Padding(
+            /*Padding(
               padding: const EdgeInsets.only(left: 30.0, top: 30),
               child: Row(
                 children: [
@@ -173,10 +197,8 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => RegisterPage()));
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => LoginPage()));
                     },
                     child: Text(
                       " Login",
@@ -186,7 +208,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                 ],
               ),
-            ),
+            ),*/
           ],
         ),
       ),
