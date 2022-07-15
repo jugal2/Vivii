@@ -8,6 +8,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:path/path.dart';
 import 'package:http/http.dart' as http;
+import 'package:vivii/Widgets/ViViiDrawer.dart';
+import 'package:vivii/Widgets/ViviiAppbar.dart';
 import 'package:vivii/globals.dart' as global;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -83,6 +85,8 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: ViViiAppbar(context),
+      drawer: ViviiDrawer(),
       body: ListView(
         shrinkWrap: true,
         physics: BouncingScrollPhysics(),
