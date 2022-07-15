@@ -4,11 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 String api_base_url = "http://fashion.graphionic.com/api/";
+String api_happick_url = "http://happicks.co.in/serverapi/";
+String api_weclicks_url = "https://app.weclicks.in/api/";
 
 String primary_color = "00726d";
 String secondary_color = "";
 String grey_color = "";
 String primary_user_id = "";
+String primary_contact = "";
+String primary_name = "";
 bool isLoggedIn = false;
 String user_id = "";
 String fullname = "";

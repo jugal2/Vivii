@@ -1,22 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vivii/Screens/AuthenticationModule/LoginPage.dart';
+import 'package:vivii/Screens/HomePageModule/HomePage.dart';
+import 'package:vivii/globals.dart' as global;
 
-void main() {
-  runApp(const MyApp());
-}
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  SharedPreferences pref = await SharedPreferences.getInstance();
+  var user_id = pref.getString("user_id");
+  global.primary_user_id = pref.getString("user_id").toString();
+  var status = pref.getBool('isLoggedIn');
 
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      builder: EasyLoading.init(),
-      title: 'Vivii',
-      debugShowCheckedModeBanner: false,
-      home: LoginPage(),
-    );
-  }
+  var full_name = pref.getString("full_name");
+  global.primary_name = pref.getString("full_name").toString();
+  var email = pref.getString("email");
+  var contact = pref.getString("contact");
+  global.primary_contact = pref.getString("contact").toString();
+
+  runApp(
+    MaterialApp(
+        builder: EasyLoading.init(),
+        debugShowCheckedModeBanner: false,
+        title: "ViVii",
+        home: status == true ? HomePage() : LoginPage()),
+  );
 }
