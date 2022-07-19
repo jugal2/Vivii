@@ -45,16 +45,15 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
-    this.getSliderImage();
+    this.getSliders();
+    this.getCategories();
   }
 
-  /////////Sliders////////////////
-  /////////Sliders////////////////
-  var _current = 0;
-  List? data;
-  var listitem = [];
+  //////////////////////SLIDER API////////////////////////////////
+  List? sliders;
+  var listslideritem = [];
 
-  Future<String> getSliderImage() async {
+  Future<String> getSliders() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     var user_id = pref.getString("user_id");
     configLoading();
@@ -64,64 +63,372 @@ class _HomePageState extends State<HomePage> {
       headers: {"Accept":"application/json"},
     );*/
     var res = await http.post(
-        Uri.parse(global.api_weclicks_url + "get_all_sliders"),
+        Uri.parse(global.api_happick_url + "get_top_banners"),
         headers: {"Accept": "application/json"},
         body: {"secrete": "dacb465d593bd139a6c28bb7289fa798"});
-    //print(res.body);
+    print(res.body);
     setState(() {
       EasyLoading.dismiss();
-      var convert = json.decode(res.body)['sliders'];
-      // print(convert);
-      data = convert;
-      data?.forEach((data) {
-        listitem.add(data["image_path"]);
-      });
+      var resp = json.decode(res.body);
+      if (resp['status'] == "0") {
+        EasyLoading.dismiss();
+      } else {
+        EasyLoading.dismiss();
+        setState(() {
+          var convert = json.decode(res.body)['top_banner'];
+          sliders = convert;
+          sliders?.forEach((data) {
+            listslideritem.add(data["top_banner_image_path"]);
+          });
+        });
+      }
     });
     return "Success";
   }
-  /////////Sliders////////////////
-  /////////Sliders////////////////
+  //////////////////////SLIDER API////////////////////////////////
+
+  //////////////////////CATEGORIES API//////////////////////////
+  var get_top_banners_url = global.api_happick_url + "/get_popular_category";
+  List category_data = [];
+  int? len;
+
+  Future<String> getCategories() async {
+    configLoading();
+    EasyLoading.show(status: 'Loading...');
+
+    var res = await http.post(Uri.parse(get_top_banners_url),
+        headers: {"Accept": "application/json"},
+        body: {"secrete": "dacb465d593bd139a6c28bb7289fa798"});
+
+    var resp = json.decode(res.body);
+    if (resp['status'] == "0") {
+      /* Toast.show(resp['message'], context,
+          duration: Toast.LENGTH_LONG, gravity: Toast.TOP);*/
+      EasyLoading.dismiss();
+    } else {
+      EasyLoading.dismiss();
+      setState(() {
+        var convert = json.decode(res.body)['popular_category'];
+        if (convert != null) {
+          category_data = convert;
+        } else {
+          //print("nulll");
+        }
+      });
+    }
+
+    return "Success";
+  }
+  //////////////////////CATEGORIES API//////////////////////////
 
   @override
   Widget build(BuildContext context) {
+    var deviceOrientetion = MediaQuery.of(context).orientation;
+    var heightx = MediaQuery.of(context).size.width < 570
+        ? 170.0
+        : MediaQuery.of(context).size.width < 768
+            ? 200.0
+            : 200.0;
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: ViViiAppbar(context),
       drawer: ViviiDrawer(),
       body: ListView(
         shrinkWrap: true,
         physics: BouncingScrollPhysics(),
         children: [
-          Stack(
-            children: [
-              Center(
-                child: CarouselSlider(
-                  items: listitem.map((i) {
+          Container(
+            height: 230.0,
+            child: CarouselSlider(
+              options: CarouselOptions(
+                autoPlay: true,
+                aspectRatio: 1,
+                enlargeCenterPage: true,
+                viewportFraction: 1,
+                autoPlayAnimationDuration: Duration(milliseconds: 1000),
+                autoPlayCurve: Curves.decelerate,
+              ),
+              items: sliders?.map((i) {
                     return Builder(
                       builder: (BuildContext context) {
                         return Container(
-                          child: FadedScaleAnimation(
-                            child: FadeInImage.assetNetwork(
-                              placeholder: 'assets/banner_placeholder.jpg',
-                              image: i,
-                              // fit: BoxFit.contain,
+                            width: MediaQuery.of(context).size.width,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
                             ),
-                          ),
-                        );
+                            child: GestureDetector(
+                                child: ClipRRect(
+                                  child: FadeInImage.assetNetwork(
+                                    placeholder:
+                                        'images/banner_placeholder.jpg',
+                                    image: i['top_banner_image_path'],
+                                    fit: BoxFit.fill,
+                                  ),
+                                ),
+                                onTap: () {
+                                  // print(i['category_id']);
+                                  /*Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => ProdList(
+                                          categoryId:
+                                          i['category_id'])));*/
+                                }));
                       },
                     );
-                  }).toList(),
-                  options: CarouselOptions(
-                      autoPlay: true,
-                      viewportFraction: 1.0,
-                      enlargeCenterPage: false,
-                      onPageChanged: (index, reason) {
-                        setState(() {
-                          _current = index;
-                        });
-                      }),
+                  }).toList() ??
+                  [],
+            ),
+          ),
+          Container(
+            height: 500,
+            child: GridView(
+              physics: BouncingScrollPhysics(),
+              shrinkWrap: true,
+              gridDelegate:
+                  SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    /*Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => ProdList(
+                                            categoryId: data[index]
+                                                ['category_id'])));*/
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(1.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                        color: HexColor("#E7E7E7"),
+                      )),
+/*
+                             padding: EdgeInsets.only(right: 5),
+*/
+                      width: (deviceOrientetion == Orientation.portrait)
+                          ? MediaQuery.of(context).size.width / 2
+                          : MediaQuery.of(context).size.width / 4,
+                      child: Wrap(
+                        children: <Widget>[
+                          Flexible(
+                            child: Container(
+                                height: 400,
+                                width: double.infinity,
+                                /* margin: EdgeInsets.only(
+                                       left: 3.0,
+                                     ),*/
+                                child: Image.asset(
+                                  'assets/men.jpg',
+                                )),
+                          ),
+                          Container(
+                            alignment: Alignment.center,
+                            child: Text("Male",
+                                style: GoogleFonts.nunito(
+                                  textStyle: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 25,
+                                  ),
+                                )),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-            ],
+                GestureDetector(
+                  onTap: () {
+                    /*Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => ProdList(
+                                            categoryId: data[index]
+                                                ['category_id'])));*/
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(1.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                        color: HexColor("#E7E7E7"),
+                      )),
+/*
+                             padding: EdgeInsets.only(right: 5),
+*/
+                      width: (deviceOrientetion == Orientation.portrait)
+                          ? MediaQuery.of(context).size.width / 2
+                          : MediaQuery.of(context).size.width / 4,
+                      child: Column(
+                        children: <Widget>[
+                          Flexible(
+                            child: Container(
+                                height: 150,
+                                width: double.infinity,
+                                /* margin: EdgeInsets.only(
+                                       left: 3.0,
+                                     ),*/
+                                child: Image.asset(
+                                  'assets/female.jpg',
+                                )),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(5),
+                            child: Text("Femmale",
+                                style: GoogleFonts.nunito(
+                                  textStyle: TextStyle(
+                                    color: HexColor("#8c8c8c"),
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 11,
+                                  ),
+                                )),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            color: Colors.white,
+            child: Wrap(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(
+                      left: 12, right: 5, top: 15, bottom: 15),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    // crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text("Categories",
+                          textDirection: TextDirection.ltr,
+                          style: GoogleFonts.nunito(
+                            textStyle: TextStyle(
+                              color: HexColor("#6e6e6e"),
+                              fontSize: 18.0,
+                            ),
+                          )),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: Container(
+                              height: 30.0,
+                              // margin: const EdgeInsets.only(left: 290, right: 10),
+                              child: RaisedButton(
+                                onPressed: () {
+                                  /*Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => AllCatMain()));*/
+                                },
+                                child: Text("View All",
+                                    style: GoogleFonts.nunito(
+                                      textStyle: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 14,
+                                        letterSpacing: 1,
+                                      ),
+                                    )),
+                                elevation: 0.0,
+                                //color: HexColor("#e43326"),
+                                color: HexColor("#fa6161"),
+                                //color: Colors.white,
+                                splashColor: Colors.transparent,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(100.0),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                    color: Colors.white,
+                    child: GridView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        //shrinkWrap : true,
+                        //itemCount: 2,
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3),
+                        scrollDirection: Axis.vertical,
+                        itemCount:
+                            category_data == null ? 0 : category_data.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Padding(
+                            padding: const EdgeInsets.all(3.0),
+                            child: GestureDetector(
+                              onTap: () {
+                                /*Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => ProdList(
+                                            categoryId: data[index]
+                                                ['category_id'])));*/
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.all(1.0),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      border: Border.all(
+                                    color: HexColor("#E7E7E7"),
+                                  )),
+/*
+                             padding: EdgeInsets.only(right: 5),
+*/
+                                  width: (deviceOrientetion ==
+                                          Orientation.portrait)
+                                      ? MediaQuery.of(context).size.width / 2
+                                      : MediaQuery.of(context).size.width / 4,
+                                  child: Column(
+                                    children: <Widget>[
+                                      Flexible(
+                                        child: Container(
+                                          height: 150,
+                                          width: double.infinity,
+                                          /* margin: EdgeInsets.only(
+                                       left: 3.0,
+                                     ),*/
+                                          child: FadeInImage.assetNetwork(
+                                            placeholder:
+                                                'images/product_placeholder.png',
+                                            image: category_data[index]
+                                                ['image_path'],
+                                            fit: BoxFit.fill,
+                                          ),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.all(5),
+                                        child: Text(
+                                            category_data[index]
+                                                ['category_name'],
+                                            style: GoogleFonts.nunito(
+                                              textStyle: TextStyle(
+                                                color: HexColor("#8c8c8c"),
+                                                fontWeight: FontWeight.w400,
+                                                fontSize: 11,
+                                              ),
+                                            )),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        })),
+              ],
+            ),
           ),
         ],
       ),

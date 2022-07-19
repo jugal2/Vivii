@@ -147,7 +147,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   child: Text(
                     " Login",
                     style: GoogleFonts.nunito(
-                        color: HexColor("00726d"), fontSize: 16),
+                        color: HexColor("7c948c"), fontSize: 16),
                   ),
                 ),
               ],
