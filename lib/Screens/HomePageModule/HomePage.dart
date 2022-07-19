@@ -261,11 +261,11 @@ class _HomePageState extends State<HomePage> {
                       width: (deviceOrientetion == Orientation.portrait)
                           ? MediaQuery.of(context).size.width / 2
                           : MediaQuery.of(context).size.width / 4,
-                      child: Column(
+                      child: Wrap(
                         children: <Widget>[
                           Flexible(
                             child: Container(
-                                height: 150,
+                                height: 400,
                                 width: double.infinity,
                                 /* margin: EdgeInsets.only(
                                        left: 3.0,
@@ -274,14 +274,14 @@ class _HomePageState extends State<HomePage> {
                                   'assets/female.jpg',
                                 )),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.all(5),
-                            child: Text("Femmale",
+                          Container(
+                            alignment: Alignment.center,
+                            child: Text("Female",
                                 style: GoogleFonts.nunito(
                                   textStyle: TextStyle(
-                                    color: HexColor("#8c8c8c"),
+                                    color: Colors.black,
                                     fontWeight: FontWeight.w400,
-                                    fontSize: 11,
+                                    fontSize: 25,
                                   ),
                                 )),
                           ),
