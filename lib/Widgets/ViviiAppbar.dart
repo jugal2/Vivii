@@ -7,7 +7,7 @@ AppBar ViViiAppbar(BuildContext context) {
     iconTheme: IconThemeData(
       color: Colors.grey[600],
     ),
-    elevation: 0,
+    elevation: 1,
     //backgroundColor: Color.fromRGBO(8, 64, 106, 1),
     backgroundColor: Colors.white,
     //backgroundColor: Color.fromARGB(1, 8, 64, 106),
