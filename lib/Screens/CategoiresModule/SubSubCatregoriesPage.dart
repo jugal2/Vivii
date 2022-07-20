@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
-import 'package:vivii/Screens/CategoiresModule/SubCategoriesPage.dart';
 import 'package:vivii/Screens/HomePageModule/MainPage.dart';
 import 'package:vivii/globals.dart' as global;
 import 'dart:async';
@@ -28,32 +28,38 @@ void configLoading() {
   //..customAnimation = CustomAnimation();
 }
 
-class CategoriesPage extends StatefulWidget {
-  const CategoriesPage({Key? key}) : super(key: key);
+class SubSubCategoriesPage extends StatefulWidget {
+  final String sub_category_id;
+  const SubSubCategoriesPage({Key? key, required this.sub_category_id})
+      : super(key: key);
 
   @override
-  State<CategoriesPage> createState() => _CategoriesPageState();
+  State<SubSubCategoriesPage> createState() => _SubSubCategoriesPageState();
 }
 
-class _CategoriesPageState extends State<CategoriesPage> {
+class _SubSubCategoriesPageState extends State<SubSubCategoriesPage> {
   @override
   void initState() {
     super.initState();
-    this.getMainCategory();
+    this.getSubSubCategory();
   }
 
-  List category_data = [];
+  List sub_sub_category_data = [];
+  var sub_category_name = "";
 
-  Future<String> getMainCategory() async {
+  Future<String> getSubSubCategory() async {
     configLoading();
-    EasyLoading.show(status: 'Loading...');
+    EasyLoading.show(status: 'Popular Products...');
 
-    var res = await http
-        .post(Uri.parse(global.api_base_url + "/get_main_category"), headers: {
-      "Accept": "application/json"
-    }, body: {
-      "secrete": "dacb465d593bd139a6c28bb7289fa798",
-    });
+    var res = await http.post(
+        Uri.parse(global.api_base_url + "/get_sub_sub_category"),
+        headers: {
+          "Accept": "application/json"
+        },
+        body: {
+          "secrete": "dacb465d593bd139a6c28bb7289fa798",
+          "sub_category_id": widget.sub_category_id,
+        });
     print(res.body);
     var resp = json.decode(res.body);
     if (resp['status'] == "0") {
@@ -61,9 +67,10 @@ class _CategoriesPageState extends State<CategoriesPage> {
     } else {
       EasyLoading.dismiss();
       setState(() {
-        var convert = json.decode(res.body)['home_main_category'];
+        var convert = json.decode(res.body)['sub_sub_category'];
         if (convert != null) {
-          category_data = convert;
+          sub_sub_category_data = convert;
+          sub_category_name = resp['sub_category_name'];
         } else {
           // print("null");
         }
@@ -110,22 +117,37 @@ class _CategoriesPageState extends State<CategoriesPage> {
           ),
         ],
       ),
-      backgroundColor: HexColor(global.background_color),
+      backgroundColor: Colors.white,
       body: Container(
         margin: EdgeInsets.only(left: 30, right: 30, top: 20),
         child: ListView(
           shrinkWrap: true,
           physics: BouncingScrollPhysics(),
           children: [
-            Text(
-              "Shop by category",
-              style: GoogleFonts.nunito(),
+            Row(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: SizedBox(
+                    height: 25,
+                    width: 25,
+                    child: Icon(Icons.arrow_back),
+                  ),
+                ),
+                Text(
+                  " " + sub_category_name,
+                  style: GoogleFonts.nunito(),
+                ),
+              ],
             ),
             Container(
               margin: EdgeInsets.only(top: 20),
               decoration: BoxDecoration(
-                border: Border.all(color: Colors.white, width: 2.0),
-                color: Colors.white,
+                border: Border.all(
+                    color: HexColor(global.background_color), width: 2.0),
+                color: HexColor(global.background_color),
                 borderRadius: BorderRadius.circular(10),
                 // borderRadius: BorderRadius.all(Radius.circular(10.0),),
                 boxShadow: <BoxShadow>[
@@ -139,27 +161,30 @@ class _CategoriesPageState extends State<CategoriesPage> {
               ),
               child: Column(
                 children: [
-                  Padding(
-                    padding: EdgeInsets.only(top: 10),
-                  ),
                   //////////////////////////////////
                   ListView.builder(
                     physics: BouncingScrollPhysics(),
                     shrinkWrap: true,
-                    itemCount: category_data.length,
+                    itemCount: sub_sub_category_data.length,
                     itemBuilder: (context, index) {
                       return Wrap(
                         children: [
                           ListTile(
-                            leading: SizedBox(
+                            visualDensity: VisualDensity(vertical: -3),
+                            /* leading: Icon(
+                              Icons.,
+                            ),*/
+
+                            /*SizedBox(
                               height: 30,
                               width: 30,
                               child: Image.network(
-                                category_data[index]['image_path'],
+                                sub_sub_category_data[index]['image_path'],
                               ),
-                            ),
+                            ),*/
                             title: Text(
-                              category_data[index]['main_category_name'],
+                              sub_sub_category_data[index]
+                                  ['sub_sub_category_name'],
                               style: GoogleFonts.nunito(
                                 textStyle: TextStyle(color: Colors.black),
                               ),
@@ -170,22 +195,14 @@ class _CategoriesPageState extends State<CategoriesPage> {
                               child: Icon(Icons.arrow_forward),
                             ),
                             onTap: () {
-                              print(category_data[index]['main_category_id']);
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => SubCategoriesPage(
-                                    main_category_id: category_data[index]
-                                        ['main_category_id'],
-                                  ),
-                                ),
-                              );
+                              /* Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => HomePage()));*/
                             },
                           ),
                           Container(
                             margin: EdgeInsets.only(left: 20, right: 20),
                             child: Divider(
-                              color: Colors.grey.shade100,
+                              color: Colors.white,
                               thickness: 1,
                             ),
                           ),
@@ -195,9 +212,6 @@ class _CategoriesPageState extends State<CategoriesPage> {
                   ),
 
                   ////////////////////////////
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 10),
-                  ),
                 ],
               ),
             ),

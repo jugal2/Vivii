@@ -129,11 +129,11 @@ class _HomePageState extends State<HomePage> {
   }
   //////////////////////CATEGORIES API//////////////////////////
 
-  List most_popular_product_data = [];
+  List main_category_data = [];
 
   Future<String> getMainCategory() async {
     configLoading();
-    EasyLoading.show(status: 'Popular Products...');
+    EasyLoading.show(status: 'Loading...');
 
     var res = await http
         .post(Uri.parse(global.api_base_url + "/get_main_category"), headers: {
@@ -150,7 +150,7 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         var convert = json.decode(res.body)['home_main_category'];
         if (convert != null) {
-          most_popular_product_data = convert;
+          main_category_data = convert;
         } else {
           // print("null");
         }
@@ -246,9 +246,8 @@ class _HomePageState extends State<HomePage> {
                 shrinkWrap: true,
                 physics: BouncingScrollPhysics(),
                 scrollDirection: Axis.horizontal,
-                itemCount: most_popular_product_data == null
-                    ? 0
-                    : most_popular_product_data.length,
+                itemCount:
+                    main_category_data == null ? 0 : main_category_data.length,
                 itemBuilder: (BuildContext context, int index) {
                   return GestureDetector(
                     onTap: () {
@@ -257,7 +256,7 @@ class _HomePageState extends State<HomePage> {
                           MaterialPageRoute(
                               builder: (context) => ProductDetail(
                                   product_id:
-                                      most_popular_product_data[index]
+                                      main_category_data[index]
                                           ['product_id'])));*/
                     },
                     child: Container(
@@ -271,7 +270,7 @@ class _HomePageState extends State<HomePage> {
                           Stack(
                             children: <Widget>[
                               Image.network(
-                                most_popular_product_data[index]['image_path'],
+                                main_category_data[index]['image_path'],
                               ),
                             ],
                           ),
@@ -282,8 +281,7 @@ class _HomePageState extends State<HomePage> {
                             padding:
                                 EdgeInsets.only(right: 10, left: 10, top: 5),
                             child: Text(
-                              most_popular_product_data[index]
-                                  ['main_category_name'],
+                              main_category_data[index]['main_category_name'],
                               style: GoogleFonts.nunito(
                                 textStyle: TextStyle(
                                   color: Colors.black,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
-import 'package:vivii/Screens/CategoiresModule/SubCategoriesPage.dart';
+import 'package:vivii/Screens/CategoiresModule/SubSubCatregoriesPage.dart';
 import 'package:vivii/Screens/HomePageModule/MainPage.dart';
 import 'package:vivii/globals.dart' as global;
 import 'dart:async';
@@ -28,31 +28,35 @@ void configLoading() {
   //..customAnimation = CustomAnimation();
 }
 
-class CategoriesPage extends StatefulWidget {
-  const CategoriesPage({Key? key}) : super(key: key);
+class SubCategoriesPage extends StatefulWidget {
+  final String main_category_id;
+  const SubCategoriesPage({Key? key, required this.main_category_id})
+      : super(key: key);
 
   @override
-  State<CategoriesPage> createState() => _CategoriesPageState();
+  State<SubCategoriesPage> createState() => _SubCategoriesPageState();
 }
 
-class _CategoriesPageState extends State<CategoriesPage> {
+class _SubCategoriesPageState extends State<SubCategoriesPage> {
   @override
   void initState() {
     super.initState();
-    this.getMainCategory();
+    this.getSubCategory();
   }
 
-  List category_data = [];
+  List sub_category_data = [];
+  var main_category_name = "";
 
-  Future<String> getMainCategory() async {
+  Future<String> getSubCategory() async {
     configLoading();
-    EasyLoading.show(status: 'Loading...');
+    EasyLoading.show(status: 'Popular Products...');
 
     var res = await http
-        .post(Uri.parse(global.api_base_url + "/get_main_category"), headers: {
+        .post(Uri.parse(global.api_base_url + "/get_sub_category"), headers: {
       "Accept": "application/json"
     }, body: {
       "secrete": "dacb465d593bd139a6c28bb7289fa798",
+      "main_category_id": widget.main_category_id,
     });
     print(res.body);
     var resp = json.decode(res.body);
@@ -61,9 +65,10 @@ class _CategoriesPageState extends State<CategoriesPage> {
     } else {
       EasyLoading.dismiss();
       setState(() {
-        var convert = json.decode(res.body)['home_main_category'];
+        var convert = json.decode(res.body)['sub_category'];
         if (convert != null) {
-          category_data = convert;
+          sub_category_data = convert;
+          main_category_name = resp['main_category_name'];
         } else {
           // print("null");
         }
@@ -117,9 +122,23 @@ class _CategoriesPageState extends State<CategoriesPage> {
           shrinkWrap: true,
           physics: BouncingScrollPhysics(),
           children: [
-            Text(
-              "Shop by category",
-              style: GoogleFonts.nunito(),
+            Row(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: SizedBox(
+                    height: 25,
+                    width: 25,
+                    child: Icon(Icons.arrow_back),
+                  ),
+                ),
+                Text(
+                  " " + main_category_name,
+                  style: GoogleFonts.nunito(),
+                ),
+              ],
             ),
             Container(
               margin: EdgeInsets.only(top: 20),
@@ -146,7 +165,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                   ListView.builder(
                     physics: BouncingScrollPhysics(),
                     shrinkWrap: true,
-                    itemCount: category_data.length,
+                    itemCount: sub_category_data.length,
                     itemBuilder: (context, index) {
                       return Wrap(
                         children: [
@@ -155,11 +174,11 @@ class _CategoriesPageState extends State<CategoriesPage> {
                               height: 30,
                               width: 30,
                               child: Image.network(
-                                category_data[index]['image_path'],
+                                sub_category_data[index]['image_path'],
                               ),
                             ),
                             title: Text(
-                              category_data[index]['main_category_name'],
+                              sub_category_data[index]['sub_category_name'],
                               style: GoogleFonts.nunito(
                                 textStyle: TextStyle(color: Colors.black),
                               ),
@@ -170,16 +189,14 @@ class _CategoriesPageState extends State<CategoriesPage> {
                               child: Icon(Icons.arrow_forward),
                             ),
                             onTap: () {
-                              print(category_data[index]['main_category_id']);
                               Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => SubCategoriesPage(
-                                    main_category_id: category_data[index]
-                                        ['main_category_id'],
-                                  ),
-                                ),
-                              );
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          SubSubCategoriesPage(
+                                              sub_category_id:
+                                                  sub_category_data[index]
+                                                      ['sub_category_id'])));
                             },
                           ),
                           Container(
