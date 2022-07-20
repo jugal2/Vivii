@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:vivii/Screens/HomePageModule/MainPage.dart';
+import 'package:vivii/Screens/ProductsModule/ProductList.dart';
 import 'package:vivii/globals.dart' as global;
 import 'dart:async';
 import 'dart:convert';
@@ -195,8 +196,10 @@ class _SubSubCategoriesPageState extends State<SubSubCategoriesPage> {
                               child: Icon(Icons.arrow_forward),
                             ),
                             onTap: () {
-                              /* Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => HomePage()));*/
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => ProductList()));
                             },
                           ),
                           Container(
