@@ -9,6 +9,7 @@ String api_weclicks_url = "https://app.weclicks.in/api/";
 
 String primary_color = "33483a";
 String secondary_color = "";
+String background_color = "f0f4f7";
 String grey_color = "";
 String primary_user_id = "";
 String primary_contact = "";

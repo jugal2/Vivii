@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hexcolor/hexcolor.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vivii/Screens/TestingModules/BottomNavigationBar.dart';
 
 import 'package:vivii/globals.dart' as global;
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:hexcolor/hexcolor.dart';
 
 void configLoading() {
   EasyLoading.instance
@@ -119,7 +120,6 @@ class _ViviiDrawerState extends State<ViviiDrawer> {
                   width: 25,
                   child: Image.asset(
                     'assets/home.png',
-                    color: HexColor("073571"),
                   ),
                 ),
                 title: Text(
@@ -140,7 +140,6 @@ class _ViviiDrawerState extends State<ViviiDrawer> {
                   width: 25,
                   child: Image.asset(
                     'assets/user.png',
-                    color: HexColor("073571"),
                   ),
                 ),
                 title: Text(
@@ -150,8 +149,10 @@ class _ViviiDrawerState extends State<ViviiDrawer> {
                   ),
                 ),
                 onTap: () {
-                  /*  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => MyProfile()));*/
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => MainBottomClass()));
                 },
               ),
               ListTile(
@@ -160,7 +161,6 @@ class _ViviiDrawerState extends State<ViviiDrawer> {
                   width: 25,
                   child: Image.asset(
                     'assets/portfolio.png',
-                    color: HexColor("073571"),
                   ),
                 ),
                 title: Text(
@@ -182,7 +182,6 @@ class _ViviiDrawerState extends State<ViviiDrawer> {
                   width: 25,
                   child: Image.asset(
                     'assets/hiring.png',
-                    color: HexColor("073571"),
                   ),
                 ),
                 title: Text(
@@ -204,7 +203,6 @@ class _ViviiDrawerState extends State<ViviiDrawer> {
                   width: 25,
                   child: Image.asset(
                     'assets/job-search.png',
-                    color: HexColor("073571"),
                   ),
                 ),
                 title: Text(
@@ -224,7 +222,6 @@ class _ViviiDrawerState extends State<ViviiDrawer> {
                   width: 25,
                   child: Image.asset(
                     'assets/properties.png',
-                    color: HexColor("073571"),
                   ),
                 ),
                 title: Text(
@@ -246,7 +243,6 @@ class _ViviiDrawerState extends State<ViviiDrawer> {
                   width: 25,
                   child: Image.asset(
                     'assets/reminder.png',
-                    color: HexColor("073571"),
                   ),
                 ),
                 title: Text(
@@ -270,7 +266,6 @@ class _ViviiDrawerState extends State<ViviiDrawer> {
                   width: 25,
                   child: Image.asset(
                     'assets/network.png',
-                    color: HexColor("073571"),
                   ),
                 ),
                 title: Text(

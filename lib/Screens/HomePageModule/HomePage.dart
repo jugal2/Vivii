@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:awesome_bottom_bar/awesome_bottom_bar.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +16,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:animation_wrappers/animation_wrappers.dart';
+import 'package:dot_navigation_bar/dot_navigation_bar.dart';
+
+import '../AuthenticationModule/LoginPage.dart';
+import '../AuthenticationModule/OTPPage.dart';
+import '../AuthenticationModule/RegisterPage.dart';
 
 void configLoading() {
   EasyLoading.instance
@@ -123,14 +129,14 @@ class _HomePageState extends State<HomePage> {
   }
   //////////////////////CATEGORIES API//////////////////////////
 
-  var product_url = global.api_base_url + "/get_main_category";
   List most_popular_product_data = [];
 
   Future<String> getMainCategory() async {
     configLoading();
     EasyLoading.show(status: 'Popular Products...');
 
-    var res = await http.post(Uri.parse(product_url), headers: {
+    var res = await http
+        .post(Uri.parse(global.api_base_url + "/get_main_category"), headers: {
       "Accept": "application/json"
     }, body: {
       "secrete": "dacb465d593bd139a6c28bb7289fa798",
@@ -163,9 +169,8 @@ class _HomePageState extends State<HomePage> {
             ? 200.0
             : 200.0;
     return Scaffold(
+      extendBody: true,
       backgroundColor: Colors.white,
-      appBar: ViViiAppbar(context),
-      drawer: ViviiDrawer(),
       body: ListView(
         shrinkWrap: true,
         physics: BouncingScrollPhysics(),
@@ -212,7 +217,7 @@ class _HomePageState extends State<HomePage> {
                   [],
             ),
           ),
-          Positioned.directional(
+          /*  Positioned.directional(
             textDirection: Directionality.of(context),
             start: 20.0,
             bottom: 0.0,
@@ -225,13 +230,13 @@ class _HomePageState extends State<HomePage> {
                   decoration: BoxDecoration(
                     shape: BoxShape.rectangle,
                     color: _current == sliders!.indexOf(i)
-                        ? Colors.black /*.withOpacity(0.9)*/
+                        ? Colors.black */ /*.withOpacity(0.9)*/ /*
                         : Colors.red.withOpacity(0.5),
                   ),
                 );
               }).toList(),
             ),
-          ),
+          ),*/
           Container(
             margin: EdgeInsets.only(
               top: 10,
@@ -439,3 +444,5 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
+
+enum _SelectedTab { home, favorite, search, person }

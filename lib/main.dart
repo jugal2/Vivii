@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vivii/Screens/AuthenticationModule/LoginPage.dart';
-import 'package:vivii/Screens/HomePageModule/HomePage.dart';
+import 'package:vivii/Screens/HomePageModule/MainPage.dart';
 import 'package:vivii/globals.dart' as global;
 
 void main() async {
@@ -24,6 +24,6 @@ void main() async {
         builder: EasyLoading.init(),
         debugShowCheckedModeBanner: false,
         title: "ViVii",
-        home: status == true ? HomePage() : LoginPage()),
+        home: status == true ? MainPage() : LoginPage()),
   );
 }

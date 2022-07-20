@@ -9,7 +9,7 @@ import 'package:hexcolor/hexcolor.dart';
 import 'package:path/path.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:http/http.dart' as http;
-import 'package:vivii/Screens/HomePageModule/HomePage.dart';
+import 'package:vivii/Screens/HomePageModule/MainPage.dart';
 import 'package:vivii/globals.dart' as global;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -270,7 +270,7 @@ class _OTPPageState extends State<OTPPage> {
       print("User Id = " + global.user_id);
       // SendPushNotification();
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => HomePage()));
+          context, MaterialPageRoute(builder: (context) => MainPage()));
     }
   }
 
