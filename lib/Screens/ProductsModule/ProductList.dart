@@ -59,19 +59,42 @@ class _ProductListState extends State<ProductList> {
 
   List product_data = [];
   int? len;
+  int page = 1;
+  bool isLoading = true;
+  bool hasMoreData = true;
+  var lastId = "";
+  var total_records = "";
 
   Future<String> getCategories() async {
     configLoading();
     EasyLoading.show(status: 'Loading...');
 
     var res = await http.post(
-      Uri.parse(global.api_base_url + "/get_products"),
+      Uri.parse(global.api_base_url + "/get_products_load_more"),
       headers: {"Accept": "application/json"},
       body: {
         "secrete": "dacb465d593bd139a6c28bb7289fa798",
         "sub_sub_category_id": "1",
+        "last_id": lastId,
       },
     );
+
+    /* var resp = json.decode(res.body);
+
+    if (res.statusCode == 200) {
+      EasyLoading.dismiss();
+      final dataItems = jsonDecode(res.body);
+      // print("Last Id :" + lastId);
+      setState(() {
+        product_data.addAll(dataItems['products']);
+        lastId = resp['last_id'];
+        total_records = resp['total_records'];
+        // print("Last Id2222 :" + lastId);
+        // print("TOtal Records :" + total_records);
+        // print(data.length);
+        isLoading = false;
+      });
+    } else {}*/
 
     var resp = json.decode(res.body);
     if (resp['status'] == "0") {
@@ -82,12 +105,13 @@ class _ProductListState extends State<ProductList> {
       EasyLoading.dismiss();
       print(res.body);
       setState(() {
-        var convert = json.decode(res.body)['products'];
-        if (convert != null) {
-          product_data = convert;
-        } else {
-          //print("nulll");
-        }
+        product_data.addAll(resp['products']);
+        lastId = resp['last_id'];
+        total_records = resp['total_records'];
+        // print("Last Id2222 :" + lastId);
+        // print("TOtal Records :" + total_records);
+        // print(data.length);
+        isLoading = false;
       });
     }
 
@@ -107,33 +131,46 @@ class _ProductListState extends State<ProductList> {
       extendBody: true,
       backgroundColor: Colors.white,
       appBar: ViViiAppbar(context),
-      body: ListView(
-        shrinkWrap: true,
-        physics: BouncingScrollPhysics(),
+      body: Column(
         children: [
-          Padding(
-            padding: EdgeInsets.only(top: 40),
-          ),
-          GridView.builder(
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              //shrinkWrap : true,
-              //itemCount: 2,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  childAspectRatio: 0.59, crossAxisCount: 2),
-              scrollDirection: Axis.vertical,
-              itemCount: product_data == null ? 0 : product_data.length,
-              itemBuilder: (BuildContext context, int index) {
-                return GestureDetector(
-                  onTap: () {
-                    /*Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => ProdList(
-                                categoryId: data[index]
-                                    ['category_id'])));*/
-                  },
-                  child: Card(
+          Expanded(
+            child: NotificationListener<ScrollNotification>(
+              onNotification: (ScrollNotification scrollInfo) {
+                /* if ((scrollInfo.metrics.maxScrollExtent -
+                            scrollInfo.metrics.pixels)
+                        .round() ==
+                    0) {
+                  print("no more data");
+                }*/
+                print("Total Records" + total_records);
+                print(product_data.length);
+
+                if (!isLoading &&
+                    (scrollInfo.metrics.maxScrollExtent -
+                                scrollInfo.metrics.pixels)
+                            .round() <=
+                        200) {
+                  page++;
+                  getCategories();
+                  setState(() {
+                    isLoading = true;
+                  });
+                }
+                if (total_records.toString() ==
+                    product_data.length.toString()) {
+                  setState(() {
+                    isLoading = false;
+                  });
+                }
+                return true;
+              },
+              child: GridView.builder(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    childAspectRatio: 0.59, crossAxisCount: 2),
+                scrollDirection: Axis.vertical,
+                itemCount: product_data == null ? 0 : product_data.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return Card(
                     semanticContainer: true,
                     clipBehavior: Clip.antiAliasWithSaveLayer,
                     color: Colors.transparent,
@@ -225,9 +262,32 @@ class _ProductListState extends State<ProductList> {
                         ),
                       ],
                     ),
+                  );
+                },
+              ),
+            ),
+          ),
+          //
+
+          Container(
+            height: isLoading ? 50.0 : 0.0,
+            child: CircularProgressIndicator(
+              color: HexColor(global.primary_color),
+            ),
+          ),
+          /*total_records.toString() == data.length.toString()
+              ? Container(
+                  child: Text("No More Data"),
+                )
+              : Container(),*/
+          total_records.toString() == product_data.length.toString()
+              ? Container(
+                  child: Text(
+                    "No more products",
+                    style: GoogleFonts.nunito(),
                   ),
-                );
-              }),
+                )
+              : Container(),
         ],
       ),
     );
