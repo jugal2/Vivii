@@ -74,7 +74,6 @@ class _HomePageState extends State<HomePage> {
         Uri.parse(global.api_base_url + "get_top_banners"),
         headers: {"Accept": "application/json"},
         body: {"secrete": "dacb465d593bd139a6c28bb7289fa798"});
-    print(res.body);
     setState(() {
       EasyLoading.dismiss();
       var resp = json.decode(res.body);
@@ -141,7 +140,6 @@ class _HomePageState extends State<HomePage> {
     }, body: {
       "secrete": "dacb465d593bd139a6c28bb7289fa798",
     });
-    print(res.body);
     var resp = json.decode(res.body);
     if (resp['status'] == "0") {
       EasyLoading.dismiss();

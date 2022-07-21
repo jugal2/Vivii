@@ -11,6 +11,7 @@ import 'package:path/path.dart';
 import 'package:http/http.dart' as http;
 import 'package:vivii/Screens/CategoiresModule/CategoriesPage.dart';
 import 'package:vivii/Screens/HomePageModule/HomePage.dart';
+import 'package:vivii/Screens/TestingModules/InfiniteScroll.dart';
 import 'package:vivii/Widgets/ViViiDrawer.dart';
 import 'package:vivii/Widgets/ViviiAppbar.dart';
 import 'package:vivii/globals.dart' as global;
@@ -187,7 +188,7 @@ class _MainPageState extends State<MainPage> {
 
   final widgetOptions = [
     HomePage(),
-    LoginPage(),
+    FutureInfiniteScroll(),
     OTPPage(mobile_no: "8849346919"),
     RegisterPage(),
     OTPPage(mobile_no: "8849346919"),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:vivii/Screens/CategoiresModule/CategoriesPage.dart';
+import 'package:vivii/Screens/HomePageModule/MainPage.dart';
 import 'package:vivii/globals.dart' as global;
 
 AppBar ViViiAppbar(BuildContext context) {
@@ -16,21 +17,31 @@ AppBar ViViiAppbar(BuildContext context) {
     centerTitle: true,
     leading: Padding(
       padding: const EdgeInsets.all(10.0),
-      child: GestureDetector(
-        onTap: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => CategoriesPage()));
-        },
-        child: Image.asset(
-          'assets/menu.png',
-          color: HexColor('33483a'),
-        ),
+      child: Row(
+        children: [
+          GestureDetector(
+            onTap: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => CategoriesPage()));
+            },
+            child: Image.asset(
+              'assets/menu.png',
+              color: HexColor('33483a'),
+            ),
+          ),
+        ],
       ),
     ),
-    title: Text(
-      "Vivii",
-      style: GoogleFonts.nunito(
-        color: Colors.black,
+    title: GestureDetector(
+      onTap: () {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => MainPage()));
+      },
+      child: Text(
+        "Vivii",
+        style: GoogleFonts.nunito(
+          color: Colors.black,
+        ),
       ),
     ),
     actions: [
