@@ -51,6 +51,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     this.getHomePage();
+    this.getBottomBar();
   }
 
   ////////////////////////HOMEPAGE API////////////////////////////
@@ -115,7 +116,6 @@ class _HomePageState extends State<HomePage> {
 
   //////////////////////BOTTOM BAR API///////////////////////////
 
-/*
   var bottombar_url = global.api_happick_url + "/get_bottom_bar";
   List bottom_bar_data = [];
 
@@ -131,10 +131,8 @@ class _HomePageState extends State<HomePage> {
     //print(res.body);
     var resp = json.decode(res.body);
     if (resp['status'] == "0") {
-      */
-/*  Toast.show(resp['message'], context,
-          duration: Toast.LENGTH_LONG, gravity: Toast.TOP);*/ /*
-
+      /*  Toast.show(resp['message'], context,
+          duration: Toast.LENGTH_LONG, gravity: Toast.TOP);*/
       EasyLoading.dismiss();
     } else {
       EasyLoading.dismiss();
@@ -150,7 +148,6 @@ class _HomePageState extends State<HomePage> {
 
     return "Success";
   }
-*/
 
   //////////////////////BOTTOM BAR API///////////////////////////
 
@@ -576,8 +573,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                 );
               }),
-
-          /*  Container(
+          Container(
             color: Colors.white,
             child: Wrap(
               children: [
@@ -599,7 +595,7 @@ class _HomePageState extends State<HomePage> {
                         itemBuilder: (BuildContext context, int index) {
                           return GestureDetector(
                             onTap: () {
-                              */ /* Navigator.push(
+                              /* Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => BottomBarDesc(
@@ -610,7 +606,7 @@ class _HomePageState extends State<HomePage> {
                                           desc: bottom_bar_data[index]
                                               ['description'],
                                           title: bottom_bar_data[index]
-                                              ['title'])));*/ /*
+                                              ['title'])));*/
                             },
                             child: Container(
                               decoration: BoxDecoration(
@@ -670,7 +666,7 @@ class _HomePageState extends State<HomePage> {
                         })),
               ],
             ),
-          ),*/
+          ),
         ],
       ),
     );
