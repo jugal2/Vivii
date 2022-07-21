@@ -15,14 +15,15 @@ void configLoading() {
   EasyLoading.instance
     ..displayDuration = const Duration(milliseconds: 2000)
     ..indicatorType = EasyLoadingIndicatorType.foldingCube
-    ..loadingStyle = EasyLoadingStyle.light
+    ..loadingStyle = EasyLoadingStyle.custom
     ..indicatorSize = 45.0
     ..radius = 10.0
-    ..progressColor = Colors.yellow
-    ..backgroundColor = Colors.green
-    ..indicatorColor = Colors.yellow
-    ..textColor = Colors.yellow
-    ..maskColor = Colors.blue.withOpacity(0.5)
+    ..progressColor = HexColor(global.primary_color)
+    ..backgroundColor = Colors.transparent
+    ..boxShadow = <BoxShadow>[]
+    ..indicatorColor = HexColor(global.primary_color)
+    ..textColor = HexColor(global.primary_color)
+    ..maskColor = Colors.green.withOpacity(0.5)
     ..userInteractions = false
     ..dismissOnTap = false;
   //..customAnimation = CustomAnimation();
@@ -49,7 +50,7 @@ class _SubCategoriesPageState extends State<SubCategoriesPage> {
 
   Future<String> getSubCategory() async {
     configLoading();
-    EasyLoading.show(status: 'Popular Products...');
+    EasyLoading.show(status: 'Loading...');
 
     var res = await http
         .post(Uri.parse(global.api_base_url + "/get_sub_category"), headers: {

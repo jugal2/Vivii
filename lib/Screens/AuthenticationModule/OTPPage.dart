@@ -19,14 +19,15 @@ void configLoading() {
   EasyLoading.instance
     ..displayDuration = const Duration(milliseconds: 2000)
     ..indicatorType = EasyLoadingIndicatorType.foldingCube
-    ..loadingStyle = EasyLoadingStyle.light
+    ..loadingStyle = EasyLoadingStyle.custom
     ..indicatorSize = 45.0
     ..radius = 10.0
-    ..progressColor = Colors.yellow
-    ..backgroundColor = Colors.green
-    ..indicatorColor = Colors.yellow
-    ..textColor = Colors.yellow
-    ..maskColor = Colors.blue.withOpacity(0.5)
+    ..progressColor = HexColor(global.primary_color)
+    ..backgroundColor = Colors.transparent
+    ..boxShadow = <BoxShadow>[]
+    ..indicatorColor = HexColor(global.primary_color)
+    ..textColor = HexColor(global.primary_color)
+    ..maskColor = Colors.green.withOpacity(0.5)
     ..userInteractions = false
     ..dismissOnTap = false;
   //..customAnimation = CustomAnimation();
@@ -79,146 +80,151 @@ class _OTPPageState extends State<OTPPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Material(
-        color: Colors.white,
-        child: ListView(
-          children: [
-            const SizedBox(height: 80),
-            const SizedBox(height: 80),
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 8.0),
-              child: Text(
-                'Phone Number Verification',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
-                textAlign: TextAlign.center,
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        body: Material(
+          color: Colors.white,
+          child: ListView(
+            children: [
+              const SizedBox(height: 80),
+              const SizedBox(height: 80),
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 8.0),
+                child: Text(
+                  'Phone Number Verification',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
+                  textAlign: TextAlign.center,
+                ),
               ),
-            ),
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 30.0, vertical: 8),
-              child: RichText(
-                text: TextSpan(
-                    text: "Enter the code sent to ",
-                    children: [
-                      TextSpan(
-                          text: "${widget.mobile_no}",
-                          style: const TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15)),
-                    ],
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 30.0, vertical: 8),
+                child: RichText(
+                  text: TextSpan(
+                      text: "Enter the code sent to ",
+                      children: [
+                        TextSpan(
+                            text: "${widget.mobile_no}",
+                            style: const TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15)),
+                      ],
+                      style:
+                          const TextStyle(color: Colors.black54, fontSize: 15)),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Form(
+                key: formKey,
+                child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 8.0, horizontal: 30),
+                    child: PinCodeTextField(
+                      appContext: context,
+                      pastedTextStyle: TextStyle(
+                        color: Colors.green.shade600,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      length: 6,
+
+                      animationType: AnimationType.scale,
+                      validator: (v) {
+                        if (v!.length < 3) {
+                          return "I'm from validator";
+                        } else {
+                          return null;
+                        }
+                      },
+                      pinTheme: PinTheme(
+                        ////ACTIVE//////
+                        activeColor: HexColor("00736d"),
+                        /////INACTIVE////
+                        inactiveColor: HexColor("bbbcc1"),
+                        /////INACTIVE////
+                        selectedColor: HexColor("6e9a96"),
+                        shape: PinCodeFieldShape.box,
+                        borderRadius: BorderRadius.circular(5),
+                        fieldHeight: 50,
+                        fieldWidth: 40,
+                        activeFillColor: Colors.white,
+                      ),
+                      cursorColor: Colors.black,
+                      animationDuration: const Duration(milliseconds: 300),
+                      enableActiveFill: false,
+                      errorAnimationController: errorController,
+                      controller: textEditingController,
+                      keyboardType: TextInputType.number,
+
+                      onCompleted: (v) {
+                        otpVerification(context, _otp);
+                      },
+                      // onTap: () {
+                      //   print("Pressed");
+                      // },
+                      onChanged: (value) {
+                        debugPrint(value);
+                        setState(() {
+                          currentText = value;
+                        });
+                      },
+                      enablePinAutofill: true,
+                      dialogConfig: DialogConfig(
+                        dialogTitle: "Vivii",
+                        dialogContent:
+                            "Do You Want To Paste " + _otp.toString(),
+                        affirmativeText: "Yes",
+                      ),
+                      // beforeTextPaste: (_) => false,
+                      beforeTextPaste: (text) {
+                        debugPrint("Allowing to paste $_otp");
+                        //if you return true then it will show the paste confirmation dialog. Otherwise if false, then nothing will happen.
+                        //but you can show anything you want here, like your pop up saying wrong paste format or etc
+                        return true;
+                      },
+                    )),
+              ),
+              Padding(
+                padding: EdgeInsets.all(40),
+              ),
+              GestureDetector(
+                onTap: () {
+                  otpVerification(context, _otp);
+                  /*  formKey.currentState!.validate();
+                  // conditions for validating
+                  if (currentText.length != 6 || currentText != "123456") {
+                    errorController!.add(ErrorAnimationType
+                        .shake); // Triggering error shake animation
+                    setState(() => hasError = true);
+                  } else {
+                    setState(
+                          () {
+                        hasError = false;
+                        snackBar("OTP Verified!!");
+                      },
+                    );
+                  }*/
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                      color: HexColor(global.primary_color),
+                      borderRadius: BorderRadius.circular(10)),
+                  margin: EdgeInsets.only(left: 30, right: 30, top: 60),
+                  height: 50,
+                  child: Center(
+                      child: Text(
+                    "Verify",
                     style:
-                        const TextStyle(color: Colors.black54, fontSize: 15)),
-                textAlign: TextAlign.center,
-              ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Form(
-              key: formKey,
-              child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 8.0, horizontal: 30),
-                  child: PinCodeTextField(
-                    appContext: context,
-                    pastedTextStyle: TextStyle(
-                      color: Colors.green.shade600,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    length: 6,
-
-                    animationType: AnimationType.scale,
-                    validator: (v) {
-                      if (v!.length < 3) {
-                        return "I'm from validator";
-                      } else {
-                        return null;
-                      }
-                    },
-                    pinTheme: PinTheme(
-                      ////ACTIVE//////
-                      activeColor: HexColor("00736d"),
-                      /////INACTIVE////
-                      inactiveColor: HexColor("bbbcc1"),
-                      /////INACTIVE////
-                      selectedColor: HexColor("6e9a96"),
-                      shape: PinCodeFieldShape.box,
-                      borderRadius: BorderRadius.circular(5),
-                      fieldHeight: 50,
-                      fieldWidth: 40,
-                      activeFillColor: Colors.white,
-                    ),
-                    cursorColor: Colors.black,
-                    animationDuration: const Duration(milliseconds: 300),
-                    enableActiveFill: false,
-                    errorAnimationController: errorController,
-                    controller: textEditingController,
-                    keyboardType: TextInputType.number,
-
-                    onCompleted: (v) {
-                      otpVerification(context, _otp);
-                    },
-                    // onTap: () {
-                    //   print("Pressed");
-                    // },
-                    onChanged: (value) {
-                      debugPrint(value);
-                      setState(() {
-                        currentText = value;
-                      });
-                    },
-                    enablePinAutofill: true,
-                    dialogConfig: DialogConfig(
-                      dialogTitle: "Vivii",
-                      dialogContent: "Do You Want To Paste " + _otp.toString(),
-                      affirmativeText: "Yes",
-                    ),
-                    // beforeTextPaste: (_) => false,
-                    beforeTextPaste: (text) {
-                      debugPrint("Allowing to paste $_otp");
-                      //if you return true then it will show the paste confirmation dialog. Otherwise if false, then nothing will happen.
-                      //but you can show anything you want here, like your pop up saying wrong paste format or etc
-                      return true;
-                    },
+                        GoogleFonts.nunito(fontSize: 17, color: Colors.white),
                   )),
-            ),
-            Padding(
-              padding: EdgeInsets.all(40),
-            ),
-            GestureDetector(
-              onTap: () {
-                otpVerification(context, _otp);
-                /*  formKey.currentState!.validate();
-                // conditions for validating
-                if (currentText.length != 6 || currentText != "123456") {
-                  errorController!.add(ErrorAnimationType
-                      .shake); // Triggering error shake animation
-                  setState(() => hasError = true);
-                } else {
-                  setState(
-                        () {
-                      hasError = false;
-                      snackBar("OTP Verified!!");
-                    },
-                  );
-                }*/
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                    color: HexColor(global.primary_color),
-                    borderRadius: BorderRadius.circular(10)),
-                margin: EdgeInsets.only(left: 30, right: 30, top: 60),
-                height: 50,
-                child: Center(
-                    child: Text(
-                  "Verify",
-                  style: GoogleFonts.nunito(fontSize: 17, color: Colors.white),
-                )),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

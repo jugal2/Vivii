@@ -138,7 +138,7 @@ class _MainPageState extends State<MainPage> {
 
   Future<String> getMainCategory() async {
     configLoading();
-    EasyLoading.show(status: 'Popular Products...');
+    EasyLoading.show(status: 'Loading...');
 
     var res = await http.post(Uri.parse(product_url), headers: {
       "Accept": "application/json"
@@ -211,24 +211,64 @@ class _MainPageState extends State<MainPage> {
         : MediaQuery.of(context).size.width < 768
             ? 200.0
             : 200.0;
-    return Scaffold(
-      extendBody: true,
-      bottomNavigationBar: BottomBarFloating(
-        items: items,
-        titleStyle: GoogleFonts.nunito(),
+    return WillPopScope(
+      onWillPop: () async => _exitdialog(),
+      child: Scaffold(
+        extendBody: true,
+        bottomNavigationBar: BottomBarFloating(
+          items: items,
+          titleStyle: GoogleFonts.nunito(),
+          backgroundColor: Colors.white,
+          color: Colors.grey.shade400,
+          colorSelected: HexColor("33483a"),
+          indexSelected: selectedIndex,
+          onTap: (int index) => setState(() {
+            selectedIndex = index;
+          }),
+        ),
         backgroundColor: Colors.white,
-        color: Colors.grey.shade400,
-        colorSelected: HexColor("33483a"),
-        indexSelected: selectedIndex,
-        onTap: (int index) => setState(() {
-          selectedIndex = index;
-        }),
-      ),
-      backgroundColor: Colors.white,
-      appBar: ViViiAppbar(context),
-      body: Center(
-        child: widgetOptions.elementAt(selectedIndex),
+        appBar: ViViiAppbar(context),
+        body: Center(
+          child: widgetOptions.elementAt(selectedIndex),
+        ),
       ),
     );
+  }
+
+  Future<bool> _exitdialog() async {
+    return await showDialog(
+        context: this.context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(
+              "Vivii",
+              style: GoogleFonts.lato(),
+            ),
+            content: Text(
+              "Do You Really Wanna Exit?",
+              style: GoogleFonts.lato(),
+            ),
+            actions: [
+              FlatButton(
+                child: Text(
+                  "Cancel",
+                  style: GoogleFonts.lato(),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop(false);
+                },
+              ),
+              FlatButton(
+                child: Text(
+                  "Exit",
+                  style: GoogleFonts.lato(),
+                ),
+                onPressed: () {
+                  SystemNavigator.pop();
+                },
+              ),
+            ],
+          );
+        });
   }
 }
