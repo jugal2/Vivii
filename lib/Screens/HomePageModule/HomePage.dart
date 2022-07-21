@@ -425,6 +425,27 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
 
+          Container(
+            margin: EdgeInsets.only(left: 20, right: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Image.asset(
+                  'assets/50.png',
+                  height: 120,
+                ),
+                Image.asset(
+                  'assets/30.png',
+                  height: 130,
+                ),
+                Image.asset(
+                  'assets/20.png',
+                  height: 120,
+                ),
+              ],
+            ),
+          ),
+
           ///////////////////////CATEGORIES/////////////////////////////////////
           Container(
             color: Colors.white,
