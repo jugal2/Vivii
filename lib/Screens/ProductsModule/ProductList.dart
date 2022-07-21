@@ -41,8 +41,9 @@ void configLoading() {
 }
 
 class ProductList extends StatefulWidget {
-  const ProductList({Key? key}) : super(key: key);
-
+  const ProductList({Key? key, required this.sub_sub_category_id})
+      : super(key: key);
+  final String sub_sub_category_id;
   @override
   State<ProductList> createState() => _ProductListState();
 }
@@ -74,7 +75,7 @@ class _ProductListState extends State<ProductList> {
       headers: {"Accept": "application/json"},
       body: {
         "secrete": "dacb465d593bd139a6c28bb7289fa798",
-        "sub_sub_category_id": "1",
+        "sub_sub_category_id": widget.sub_sub_category_id,
         "last_id": lastId,
       },
     );
@@ -165,6 +166,7 @@ class _ProductListState extends State<ProductList> {
                 return true;
               },
               child: GridView.builder(
+                physics: BouncingScrollPhysics(),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     childAspectRatio: 0.59, crossAxisCount: 2),
                 scrollDirection: Axis.vertical,
@@ -195,7 +197,7 @@ class _ProductListState extends State<ProductList> {
                               child: Text(
                                 product_data[index]['product_name'],
                                 style: GoogleFonts.nunito(fontSize: 11),
-                                maxLines: 2,
+                                maxLines: 1,
                               ),
                             ),
                           ],
@@ -269,12 +271,6 @@ class _ProductListState extends State<ProductList> {
           ),
           //
 
-          Container(
-            height: isLoading ? 50.0 : 0.0,
-            child: CircularProgressIndicator(
-              color: HexColor(global.primary_color),
-            ),
-          ),
           /*total_records.toString() == data.length.toString()
               ? Container(
                   child: Text("No More Data"),

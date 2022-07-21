@@ -199,7 +199,10 @@ class _SubSubCategoriesPageState extends State<SubSubCategoriesPage> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => ProductList()));
+                                      builder: (context) => ProductList(
+                                          sub_sub_category_id:
+                                              sub_sub_category_data[index]
+                                                  ['sub_sub_category_id'])));
                             },
                           ),
                           Container(
