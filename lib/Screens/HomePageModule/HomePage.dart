@@ -50,28 +50,43 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-
-    this.getSliders();
-    this.getCategories();
-    this.getMainCategory();
+    this.getHomePage();
   }
 
-  //////////////////////SLIDER API////////////////////////////////
+  ////////////////////////HOMEPAGE API////////////////////////////
+  ////////////////////////HOMEPAGE API////////////////////////////
+  ////////////////////////HOMEPAGE API////////////////////////////
+
+  /////////////////SLIDERS VAR//////////////////////////
   List? sliders;
   var listslideritem = [];
   var _current = 0;
+  /////////////////SLIDERS VAR//////////////////////////
 
-  Future<String> getSliders() async {
+  /////////////////MAINCATEGORY VAR/////////////////////
+  List main_category_data = [];
+  /////////////////MAINCATEGORY VAR/////////////////////
+
+  ////////////////BOTTOMBANNERS VAR/////////////////////
+  List bottombanner_data = [];
+  ////////////////BOTTOMBANNERS VAR/////////////////////
+
+  /////////////////LATESTPRODUCT VAR/////////////////////
+  List latest_product_data = [];
+  /////////////////LATESTPRODUCT VAR/////////////////////
+
+  /////////////////RANDOMCATEGORY VAR/////////////////////
+  List random_product_data = [];
+  var random_category_title = "";
+  /////////////////RANDOMCATEGORY VAR/////////////////////
+
+  Future<String> getHomePage() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     var user_id = pref.getString("user_id");
     configLoading();
     EasyLoading.show(status: 'Loading...');
-    /*var res = await http.get(
-      Uri.encodeFull(url),
-      headers: {"Accept":"application/json"},
-    );*/
     var res = await http.post(
-        Uri.parse(global.api_base_url + "get_top_banners"),
+        Uri.parse(global.api_base_url + "get_homepage_data"),
         headers: {"Accept": "application/json"},
         body: {"secrete": "dacb465d593bd139a6c28bb7289fa798"});
     setState(() {
@@ -82,73 +97,51 @@ class _HomePageState extends State<HomePage> {
       } else {
         EasyLoading.dismiss();
         setState(() {
-          var convert = json.decode(res.body)['top_banners'];
-          sliders = convert;
-          sliders?.forEach((data) {
-            listslideritem.add(data["image_path"]);
-          });
+          sliders = json.decode(res.body)['top_banners'];
+          bottombanner_data = json.decode(res.body)['bottom_banners'];
+          main_category_data = json.decode(res.body)['home_main_category'];
+          latest_product_data = json.decode(res.body)['latest_product_data'];
+          random_product_data = json.decode(res.body)['random_product_data'];
+          random_category_title =
+              json.decode(res.body)['random_category_title'];
         });
       }
     });
     return "Success";
   }
-  //////////////////////SLIDER API////////////////////////////////
+  ////////////////////////HOMEPAGE API////////////////////////////
+  ////////////////////////HOMEPAGE API////////////////////////////
+  ////////////////////////HOMEPAGE API////////////////////////////
 
-  //////////////////////CATEGORIES API//////////////////////////
-  var get_top_banners_url = global.api_happick_url + "/get_popular_category";
-  List category_data = [];
-  int? len;
+  //////////////////////BOTTOM BAR API///////////////////////////
 
-  Future<String> getCategories() async {
+/*
+  var bottombar_url = global.api_happick_url + "/get_bottom_bar";
+  List bottom_bar_data = [];
+
+  Future<String> getBottomBar() async {
     configLoading();
-    EasyLoading.show(status: 'Loading...');
+    EasyLoading.show(status: 'Popular Products...');
 
-    var res = await http.post(Uri.parse(get_top_banners_url),
-        headers: {"Accept": "application/json"},
-        body: {"secrete": "dacb465d593bd139a6c28bb7289fa798"});
-
-    var resp = json.decode(res.body);
-    if (resp['status'] == "0") {
-      /* Toast.show(resp['message'], context,
-          duration: Toast.LENGTH_LONG, gravity: Toast.TOP);*/
-      EasyLoading.dismiss();
-    } else {
-      EasyLoading.dismiss();
-      setState(() {
-        var convert = json.decode(res.body)['popular_category'];
-        if (convert != null) {
-          category_data = convert;
-        } else {
-          //print("nulll");
-        }
-      });
-    }
-
-    return "Success";
-  }
-  //////////////////////CATEGORIES API//////////////////////////
-
-  List main_category_data = [];
-
-  Future<String> getMainCategory() async {
-    configLoading();
-    EasyLoading.show(status: 'Loading...');
-
-    var res = await http
-        .post(Uri.parse(global.api_base_url + "/get_main_category"), headers: {
+    var res = await http.post(Uri.parse(bottombar_url), headers: {
       "Accept": "application/json"
     }, body: {
       "secrete": "dacb465d593bd139a6c28bb7289fa798",
     });
+    //print(res.body);
     var resp = json.decode(res.body);
     if (resp['status'] == "0") {
+      */
+/*  Toast.show(resp['message'], context,
+          duration: Toast.LENGTH_LONG, gravity: Toast.TOP);*/ /*
+
       EasyLoading.dismiss();
     } else {
       EasyLoading.dismiss();
       setState(() {
-        var convert = json.decode(res.body)['home_main_category'];
+        var convert = json.decode(res.body)['bottom_bar'];
         if (convert != null) {
-          main_category_data = convert;
+          bottom_bar_data = convert;
         } else {
           // print("null");
         }
@@ -157,6 +150,9 @@ class _HomePageState extends State<HomePage> {
 
     return "Success";
   }
+*/
+
+  //////////////////////BOTTOM BAR API///////////////////////////
 
   @override
   Widget build(BuildContext context) {
@@ -235,6 +231,61 @@ class _HomePageState extends State<HomePage> {
               }).toList(),
             ),
           ),*/
+          Padding(
+            padding:
+                const EdgeInsets.only(left: 12, right: 5, top: 15, bottom: 5),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              // crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text("Categories",
+                    textDirection: TextDirection.ltr,
+                    style: GoogleFonts.nunito(
+                      textStyle: TextStyle(
+                        color: HexColor("#6e6e6e"),
+                        fontSize: 18.0,
+                      ),
+                    )),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: Container(
+                        height: 30.0,
+                        // margin: const EdgeInsets.only(left: 290, right: 10),
+                        child: RaisedButton(
+                          onPressed: () {
+                            /* Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        AllCatMain()));*/
+                          },
+                          child: Text("Explore",
+                              style: GoogleFonts.nunito(
+                                textStyle: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14,
+                                  letterSpacing: 1,
+                                ),
+                              )),
+                          elevation: 0.0,
+                          //color: HexColor("#e43326"),
+                          color: HexColor(global.primary_color),
+                          //color: Colors.white,
+                          splashColor: Colors.transparent,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(100.0),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
           Container(
             margin: EdgeInsets.only(
               top: 10,
@@ -298,6 +349,86 @@ class _HomePageState extends State<HomePage> {
                   );
                 }),
           ),
+
+          Container(
+            color: Colors.white,
+            height: 350,
+            child: Wrap(
+              children: [
+                Container(
+                  padding: const EdgeInsets.only(
+                      left: 12, right: 5, top: 15, bottom: 15),
+                  child: Text(
+                    "New arrival",
+                    textDirection: TextDirection.ltr,
+                    style: GoogleFonts.nunito(
+                      textStyle: TextStyle(
+                        color: HexColor("#6e6e6e"),
+                        fontSize: 18.0,
+                      ),
+                    ),
+                  ),
+                ),
+                Container(
+                  height: 300,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(10.0),
+                    ),
+                  ),
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    physics: BouncingScrollPhysics(),
+                    scrollDirection: Axis.horizontal,
+                    itemCount: latest_product_data == null
+                        ? 0
+                        : latest_product_data.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Container(
+                        width: 180,
+                        child: Card(
+                          semanticContainer: true,
+                          clipBehavior: Clip.antiAliasWithSaveLayer,
+                          color: Colors.transparent,
+                          elevation: 0,
+                          child: Column(
+                            children: [
+                              Container(
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: Image.network(
+                                    latest_product_data[index]['image_path'],
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(top: 5),
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Flexible(
+                                    child: Text(
+                                      latest_product_data[index]
+                                          ['product_name'],
+                                      style: GoogleFonts.nunito(fontSize: 11),
+                                      maxLines: 2,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          ///////////////////////CATEGORIES/////////////////////////////////////
           Container(
             color: Colors.white,
             child: Wrap(
@@ -309,7 +440,7 @@ class _HomePageState extends State<HomePage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     // crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Text("Categories",
+                      Text(random_category_title,
                           textDirection: TextDirection.ltr,
                           style: GoogleFonts.nunito(
                             textStyle: TextStyle(
@@ -317,7 +448,7 @@ class _HomePageState extends State<HomePage> {
                               fontSize: 18.0,
                             ),
                           )),
-                      Row(
+                      /* Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Padding(
@@ -327,10 +458,10 @@ class _HomePageState extends State<HomePage> {
                               // margin: const EdgeInsets.only(left: 290, right: 10),
                               child: RaisedButton(
                                 onPressed: () {
-                                  /*Navigator.push(
+                                  */ /*  Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => AllCatMain()));*/
+                                          builder: (context) => AllCatMain()));*/ /*
                                 },
                                 child: Text("View All",
                                     style: GoogleFonts.nunito(
@@ -352,7 +483,7 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ),
                         ],
-                      ),
+                      ),*/
                     ],
                   ),
                 ),
@@ -364,77 +495,182 @@ class _HomePageState extends State<HomePage> {
                         //shrinkWrap : true,
                         //itemCount: 2,
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 3),
+                            childAspectRatio: 0.59, crossAxisCount: 3),
                         scrollDirection: Axis.vertical,
-                        itemCount:
-                            category_data == null ? 0 : category_data.length,
+                        itemCount: random_product_data == null
+                            ? 0
+                            : random_product_data.length,
                         itemBuilder: (BuildContext context, int index) {
-                          return Padding(
-                            padding: const EdgeInsets.all(3.0),
-                            child: GestureDetector(
-                              onTap: () {
-                                /*Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => ProdList(
-                                            categoryId: data[index]
-                                                ['category_id'])));*/
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.all(1.0),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                      border: Border.all(
-                                    color: HexColor("#E7E7E7"),
-                                  )),
-/*
-                             padding: EdgeInsets.only(right: 5),
-*/
-                                  width: (deviceOrientetion ==
-                                          Orientation.portrait)
-                                      ? MediaQuery.of(context).size.width / 2
-                                      : MediaQuery.of(context).size.width / 4,
-                                  child: Column(
-                                    children: <Widget>[
-                                      Flexible(
-                                        child: Container(
-                                          height: 150,
-                                          width: double.infinity,
-                                          /* margin: EdgeInsets.only(
-                                       left: 3.0,
-                                     ),*/
-                                          child: FadeInImage.assetNetwork(
-                                            placeholder:
-                                                'images/product_placeholder.png',
-                                            image: category_data[index]
-                                                ['image_path'],
-                                            fit: BoxFit.fill,
-                                          ),
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.all(5),
-                                        child: Text(
-                                            category_data[index]
-                                                ['category_name'],
-                                            style: GoogleFonts.nunito(
-                                              textStyle: TextStyle(
-                                                color: HexColor("#8c8c8c"),
-                                                fontWeight: FontWeight.w400,
-                                                fontSize: 11,
-                                              ),
-                                            )),
-                                      ),
-                                    ],
+                          return Card(
+                            semanticContainer: true,
+                            clipBehavior: Clip.antiAliasWithSaveLayer,
+                            color: Colors.transparent,
+                            elevation: 0,
+                            child: Column(
+                              children: [
+                                Container(
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: Image.network(
+                                      random_product_data[index]['image_path'],
+                                    ),
                                   ),
                                 ),
-                              ),
+                                Padding(
+                                  padding: EdgeInsets.only(top: 5),
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Flexible(
+                                      child: Text(
+                                        random_product_data[index]
+                                            ['product_name'],
+                                        style: GoogleFonts.nunito(fontSize: 11),
+                                        maxLines: 2,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
                           );
                         })),
               ],
             ),
           ),
+
+          ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              scrollDirection: Axis.vertical,
+              itemCount:
+                  bottombanner_data == null ? 0 : bottombanner_data.length,
+              itemBuilder: (BuildContext context, int index) {
+                return GestureDetector(
+                  onTap: () {
+                    /* Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ProdList(
+                                categoryId: data[index]['category_id'])));*/
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      //border: Border.all(color: Colors.white, width: 2.0),
+                      color: Colors.white,
+                      border: Border.all(color: HexColor("e7e7e7e7")),
+
+                      /* boxShadow: <BoxShadow>[
+                    new BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 3.0,
+                      offset: new Offset(0.0, 3.0),
+                    ),
+                  ],*/
+                    ),
+                    margin: EdgeInsets.only(top: 15.0),
+                    child: Image.network(
+                      bottombanner_data[index]['image_path'],
+                    ),
+                  ),
+                );
+              }),
+
+          /*  Container(
+            color: Colors.white,
+            child: Wrap(
+              children: [
+                Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(10.0),
+                      ),
+                    ),
+                    margin: EdgeInsets.only(top: 15.0),
+                    height: heightx,
+                    child: ListView.builder(
+                        shrinkWrap: true,
+                        physics: BouncingScrollPhysics(),
+                        scrollDirection: Axis.horizontal,
+                        itemCount: bottom_bar_data == null
+                            ? 0
+                            : bottom_bar_data.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return GestureDetector(
+                            onTap: () {
+                              */ /* Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => BottomBarDesc(
+                                          product_id: bottom_bar_data[index]
+                                              ['bottom_bar_id'],
+                                          image_path: bottom_bar_data[index]
+                                              ['image_path'],
+                                          desc: bottom_bar_data[index]
+                                              ['description'],
+                                          title: bottom_bar_data[index]
+                                              ['title'])));*/ /*
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(10.0),
+                                ),
+                              ),
+                              padding: EdgeInsets.only(right: 15),
+                              width: (deviceOrientetion == Orientation.portrait)
+                                  ? MediaQuery.of(context).size.width / 3
+                                  : MediaQuery.of(context).size.width / 3,
+                              child: Column(
+                                children: <Widget>[
+                                  Stack(
+                                    children: <Widget>[
+                                      Container(
+                                        height: heightx - 50,
+                                        margin: EdgeInsets.only(
+                                          left: 10.0,
+                                        ),
+                                        child: FadeInImage.assetNetwork(
+                                          placeholder:
+                                              'images/product_placeholder.png',
+                                          image: bottom_bar_data[index]
+                                              ['image_path'],
+                                          height: 80,
+                                          width: 80,
+                                        ),
+                                        // child: Image.network(data[index]['image_path'], height: 100,),
+                                      ),
+                                    ],
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(top: 3.0),
+                                    //child:Expanded(
+                                    alignment: Alignment.center,
+                                    padding: EdgeInsets.only(
+                                        right: 10, left: 10, top: 5),
+                                    child: Text(
+                                      bottom_bar_data[index]['title'],
+                                      style: GoogleFonts.roboto(
+                                        textStyle: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 11,
+                                        ),
+                                      ),
+
+                                      maxLines: 2,
+                                      textAlign: TextAlign.center,
+                                      //textDirection: TextDirection.ltr,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        })),
+              ],
+            ),
+          ),*/
         ],
       ),
     );
