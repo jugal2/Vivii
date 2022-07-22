@@ -55,6 +55,7 @@ dependencies:
   firebase_messaging: ^11.4.1
   flutter_local_notifications: ^9.6.0
   firebase_core: ^1.10.6
+  iconsax: ^0.0.8
 
 dev_dependencies:
   flutter_test:

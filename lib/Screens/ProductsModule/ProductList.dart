@@ -10,6 +10,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:path/path.dart';
 import 'package:http/http.dart' as http;
+import 'package:vivii/Screens/ProductsModule/ProductDetails.dart';
 import 'package:vivii/Widgets/ViViiDrawer.dart';
 import 'package:vivii/Widgets/ViviiAppbar.dart';
 import 'package:vivii/globals.dart' as global;
@@ -173,97 +174,107 @@ class _ProductListState extends State<ProductList> {
                 scrollDirection: Axis.vertical,
                 itemCount: product_data == null ? 0 : product_data.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return Card(
-                    semanticContainer: true,
-                    clipBehavior: Clip.antiAliasWithSaveLayer,
-                    color: Colors.transparent,
-                    elevation: 0,
-                    child: Column(
-                      children: [
-                        Container(
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: Image.network(
-                              product_data[index]['image_path'],
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ProductDetails()));
+                    },
+                    child: Card(
+                      semanticContainer: true,
+                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                      color: Colors.transparent,
+                      elevation: 0,
+                      child: Column(
+                        children: [
+                          Container(
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: Image.network(
+                                product_data[index]['image_path'],
+                              ),
                             ),
                           ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(top: 5),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Flexible(
-                              child: Text(
-                                product_data[index]['product_name'],
-                                style: GoogleFonts.nunito(fontSize: 11),
-                                maxLines: 1,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Text(
-                              ' \u{20B9}' +
-                                  " " +
-                                  product_data[index]['sell_price'],
-                              style: GoogleFonts.nunitoSans(
-                                  fontWeight: FontWeight.bold, fontSize: 14),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(left: 5),
-                            ),
-                            Text(
-                              ' \u{20B9}' + " " + product_data[index]['price'],
-                              style: GoogleFonts.nunitoSans(
-                                fontSize: 10,
-                                textStyle: TextStyle(
-                                  decoration: TextDecoration.lineThrough,
+                          Padding(
+                            padding: EdgeInsets.only(top: 5),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  product_data[index]['product_name'],
+                                  style: GoogleFonts.nunito(fontSize: 11),
+                                  maxLines: 1,
                                 ),
                               ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(left: 5),
-                            ),
-                            Text(
-                              " " +
-                                  product_data[index]['discount_percentage']
-                                      .toString() +
-                                  "% " +
-                                  "off",
-                              style: GoogleFonts.nunitoSans(
-                                  fontWeight: FontWeight.bold, fontSize: 10),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Text(
-                              product_data[index]['offer_price'],
-                              style: GoogleFonts.nunito(
-                                  color: Colors.green,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 10),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Selling Fast",
-                              style: GoogleFonts.nunito(
-                                  color: Colors.red,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 10),
-                            ),
-                          ],
-                        ),
-                      ],
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Text(
+                                ' \u{20B9}' +
+                                    " " +
+                                    product_data[index]['sell_price'],
+                                style: GoogleFonts.nunitoSans(
+                                    fontWeight: FontWeight.bold, fontSize: 14),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(left: 5),
+                              ),
+                              Text(
+                                ' \u{20B9}' +
+                                    " " +
+                                    product_data[index]['price'],
+                                style: GoogleFonts.nunitoSans(
+                                  fontSize: 10,
+                                  textStyle: TextStyle(
+                                    decoration: TextDecoration.lineThrough,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(left: 5),
+                              ),
+                              Text(
+                                " " +
+                                    product_data[index]['discount_percentage']
+                                        .toString() +
+                                    "% " +
+                                    "off",
+                                style: GoogleFonts.nunitoSans(
+                                    fontWeight: FontWeight.bold, fontSize: 10),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Text(
+                                product_data[index]['offer_price'],
+                                style: GoogleFonts.nunito(
+                                    color: Colors.green,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 10),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Selling Fast",
+                                style: GoogleFonts.nunito(
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 10),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 },

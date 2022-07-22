@@ -7,10 +7,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:path/path.dart';
 import 'package:http/http.dart' as http;
 import 'package:vivii/Screens/CategoiresModule/CategoriesPage.dart';
 import 'package:vivii/Screens/HomePageModule/HomePage.dart';
+import 'package:vivii/Screens/HomePageModule/ProfilePage.dart';
 import 'package:vivii/Screens/TestingModules/ComingSoon.dart';
 import 'package:vivii/Screens/TestingModules/InfiniteScroll.dart';
 import 'package:vivii/Widgets/ViViiDrawer.dart';
@@ -166,31 +168,31 @@ class _MainPageState extends State<MainPage> {
 
   List<TabItem> items = [
     TabItem(
-      icon: Icons.home,
+      icon: Iconsax.home,
       title: 'Home',
     ),
     TabItem(
-      icon: Icons.search_sharp,
+      icon: Iconsax.search_normal,
       title: 'Explore',
     ),
     TabItem(
-      icon: Icons.favorite_border,
+      icon: Iconsax.personalcard,
+      title: 'Account',
+    ),
+    TabItem(
+      icon: Iconsax.heart,
       title: 'Wishlist',
     ),
     TabItem(
-      icon: Icons.shopping_cart_outlined,
+      icon: Iconsax.shopping_cart,
       title: 'Cart',
-    ),
-    TabItem(
-      icon: Icons.account_box,
-      title: 'Account',
     ),
   ];
 
   final widgetOptions = [
     HomePage(),
     ComingSoon(),
-    ComingSoon(),
+    ProfilePage(),
     ComingSoon(),
     ComingSoon(),
   ];
@@ -217,7 +219,7 @@ class _MainPageState extends State<MainPage> {
         extendBody: true,
         bottomNavigationBar: BottomBarFloating(
           items: items,
-          titleStyle: GoogleFonts.nunito(),
+          titleStyle: GoogleFonts.nunitoSans(),
           backgroundColor: Colors.white,
           color: Colors.grey.shade400,
           colorSelected: HexColor("33483a"),
