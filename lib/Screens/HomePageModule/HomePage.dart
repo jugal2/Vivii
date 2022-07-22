@@ -9,6 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:path/path.dart';
 import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 import 'package:vivii/Widgets/ViViiDrawer.dart';
 import 'package:vivii/Widgets/ViviiAppbar.dart';
 import 'package:vivii/globals.dart' as global;
@@ -21,6 +22,9 @@ import 'package:dot_navigation_bar/dot_navigation_bar.dart';
 import '../AuthenticationModule/LoginPage.dart';
 import '../AuthenticationModule/OTPPage.dart';
 import '../AuthenticationModule/RegisterPage.dart';
+import 'dart:io' show File, Platform;
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 void configLoading() {
   EasyLoading.instance
@@ -53,7 +57,194 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     this.getHomePage();
     this.getBottomBar();
+    this.SendPushNotification();
+    this.fcmSubscribe();
   }
+
+  //////////////////Notifiaction Finale Code Starts///////////////////
+
+  final FirebaseMessaging _fcm = FirebaseMessaging.instance;
+  var devicetoken;
+  var updatetokenurl = global.api_base_url + "user_device_token";
+
+  void fcmSubscribe() {
+    _fcm.subscribeToTopic('weclicks');
+    print("topic SUbscriberd");
+  }
+
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+
+  void SendPushNotification() {
+    const AndroidInitializationSettings initializationSettingsAndroid =
+        AndroidInitializationSettings('@drawable/ic_launcher');
+
+    final IOSInitializationSettings initializationSettingsIOS =
+        IOSInitializationSettings();
+
+    final InitializationSettings initializationSettings =
+        InitializationSettings(
+            android: initializationSettingsAndroid,
+            iOS: initializationSettingsIOS);
+
+    flutterLocalNotificationsPlugin.initialize(initializationSettings);
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      RemoteNotification? notification = message.notification;
+      if (Platform.isAndroid) {
+        var title = notification?.title;
+
+        print("asdasdasd");
+
+        // var body = message.data['message'];
+        var body = notification?.body;
+
+        print(message);
+
+        //var image = message.data['image'];
+        var image =
+            "https://9series.com/blog/wp-content/uploads/2019/04/Flutter-Future-of-App-Development.jpg";
+
+        showNotification(title!, body!, image);
+      } else if (Platform.isIOS) {
+        var title = message.data['title'];
+        var body = message.data['message'];
+        var image = message.data['image'];
+        print(notification);
+        showNotification(title, body, image);
+        print("onMessage :$message");
+      }
+    });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print("onMessageOpenedApp: $message");
+    });
+
+    /*FirebaseMessaging.onBackgroundMessage((RemoteMessage message) {
+      print("onBackgroundMessage: $message");
+    });*/
+
+    _fcm.requestPermission(
+        sound: true, badge: true, alert: true, provisional: false);
+
+    //////Update Device Token/////////
+    _fcm.getToken().then((token) {
+      final tokenStr = token.toString();
+      devicetoken = "Push Messaging token: $token";
+      print(tokenStr);
+      devicetoken = tokenStr;
+
+      UpdateDeviceToken();
+    });
+  }
+
+  showNotification(String title, String body, String image) async {
+    await _demoNotification(title, body, image);
+    // print(image);
+  }
+
+  Future<void> _demoNotification(
+      String title, String body, String image) async {
+    if (image != "") {
+      //  print("asdad");
+      // print(image);
+
+      var attachmentPicturePath =
+          await _downloadAndSaveFile(image, 'attachment_img.jpg');
+
+      var iOSChannelSpecifics = IOSNotificationDetails(
+        attachments: [
+          IOSNotificationAttachment(
+            attachmentPicturePath,
+          )
+        ],
+      );
+
+      var bigPictureStyleInformation = BigPictureStyleInformation(
+        FilePathAndroidBitmap(attachmentPicturePath),
+        largeIcon: FilePathAndroidBitmap(attachmentPicturePath),
+        hideExpandedLargeIcon: false,
+        contentTitle: title,
+        htmlFormatContentTitle: true,
+        summaryText: body,
+        htmlFormatSummaryText: true,
+      );
+
+      final sound = 'not_sound.wav';
+
+      var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+        'CHANNEL ID 2',
+        'CHANNEL NAME 2',
+        importance: Importance.high,
+        priority: Priority.high,
+        // sound: RawResourceAndroidNotificationSound(sound.split('.').first),
+        enableVibration: true,
+        largeIcon: FilePathAndroidBitmap(attachmentPicturePath),
+        styleInformation: bigPictureStyleInformation,
+      );
+
+      var platformChannelSpecifics = NotificationDetails(
+          android: androidPlatformChannelSpecifics, iOS: iOSChannelSpecifics);
+      await flutterLocalNotificationsPlugin
+          .show(0, title, body, platformChannelSpecifics, payload: 'test');
+    }
+    /* else
+      {
+      // var attachmentPicturePath = await _downloadAndSaveFile(image, 'attachment_img.jpg');
+
+      var attachmentPicturePath =
+          await _downloadAndSaveFile(image, 'attachment_img.jpg');
+
+      var iOSChannelSpecifics = IOSNotificationDetails(
+        attachments: [IOSNotificationAttachment(attachmentPicturePath)],
+      );
+
+      var bigPictureStyleInformation = BigPictureStyleInformation(
+        FilePathAndroidBitmap(attachmentPicturePath),
+        contentTitle: title,
+        htmlFormatContentTitle: true,
+        summaryText: body,
+        htmlFormatSummaryText: true,
+      );
+
+      var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+        'CHANNEL ID 2',
+        'CHANNEL NAME 2',
+        importance: Importance.high,
+        priority: Priority.high,
+      );
+
+      var platformChannelSpecifics = NotificationDetails(
+          android: androidPlatformChannelSpecifics, iOS: iOSChannelSpecifics);
+      await flutterLocalNotificationsPlugin
+          .show(0, title, body, platformChannelSpecifics, payload: 'test');
+    }*/
+  }
+
+  _downloadAndSaveFile(String url, String fileName) async {
+    var directory = await getApplicationDocumentsDirectory();
+    var filePath = '${directory.path}/$fileName';
+    var response = await http.post(Uri.parse(url));
+    var file = File(filePath);
+    await file.writeAsBytes(response.bodyBytes);
+    return filePath;
+  }
+
+  void UpdateDeviceToken() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    var user_id = pref.getString("user_id");
+
+    var res = await http.post(Uri.parse(updatetokenurl), headers: {
+      "Accept": "application/json"
+    }, body: {
+      "secrete": "dacb465d593bd139a6c28bb7289fa798",
+      "user_id": user_id,
+      "token": devicetoken,
+    });
+    var resp = json.decode(res.body);
+  }
+
+  ////////////////Notifiaction Finale Code Ends///////////////////
 
   ////////////////////////HOMEPAGE API////////////////////////////
   ////////////////////////HOMEPAGE API////////////////////////////

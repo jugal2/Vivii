@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "635360083899",
+    "project_id": "vivii-3c7b1",
+    "storage_bucket": "vivii-3c7b1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:635360083899:android:3f209e1b4cdde48c4ace9e",
+        "android_client_info": {
+          "package_name": "com.graphionic.vivii"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "635360083899-e8tdkg4972c4qcq7k81fotkupfjh19h0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBrww9PQILrihKANj-up6sXh6ltUY2BhTw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "635360083899-e8tdkg4972c4qcq7k81fotkupfjh19h0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

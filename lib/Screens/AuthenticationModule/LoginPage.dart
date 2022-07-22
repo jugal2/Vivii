@@ -2,13 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vivii/Screens/AuthenticationModule/OTPPage.dart';
 import 'package:vivii/Screens/AuthenticationModule/RegisterPage.dart';
 import 'package:http/http.dart' as http;
+import 'package:vivii/Screens/HomePageModule/MainPage.dart';
 import 'dart:convert';
 import 'package:vivii/globals.dart' as global;
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 void configLoading() {
   EasyLoading.instance
@@ -37,6 +41,118 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final mobileController = TextEditingController();
+
+  final FirebaseMessaging _fcm = FirebaseMessaging.instance;
+
+  var devicetoken;
+  var tokenurl = global.api_base_url + "/register_with_token";
+  String user_city = "";
+
+  @override
+  void SendPushNotification() {
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      RemoteNotification? notification = message.notification;
+      print("onMessage :$message");
+    });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print("onMessageOpenedApp: $message");
+    });
+
+    /*FirebaseMessaging.onBackgroundMessage((RemoteMessage message) {
+      print("onBackgroundMessage: $message");
+    });*/
+
+    /* _fcm.configure(
+      onMessage: (Map<String,dynamic>message)async{
+        print("onMessage :$message");
+      },
+      onResume: (Map<String,dynamic>message)async{
+        print("onMessage :$message");
+      },
+      onLaunch: (Map<String,dynamic>message)async{
+        print("onMessage :$message");
+      },
+
+    );*/
+
+/*    _fcm.requestNotificationPermissions(
+        const IosNotificationSettings(
+            sound: true, badge: true, alert: true, provisional: true));
+    _fcm.onIosSettingsRegistered
+        .listen((IosNotificationSettings settings) {
+      print("Settings registered: $settings");
+    });*/
+
+    _fcm.getToken().then((token) {
+      final tokenStr = token.toString();
+      devicetoken = "Push Messaging token: $token";
+      print(tokenStr);
+      devicetoken = tokenStr;
+
+      loginWithToken();
+    });
+  }
+
+  void loginWithToken() async {
+    configLoading();
+    EasyLoading.show(status: 'Loading...');
+    SharedPreferences pref = await SharedPreferences.getInstance();
+
+    var res = await http.post(Uri.parse(tokenurl), headers: {
+      "Accept": "application/json"
+    }, body: {
+      "secrete": "dacb465d593bd139a6c28bb7289fa798",
+      "token": devicetoken,
+    });
+
+    //print(res.body);
+
+    var resp = json.decode(res.body);
+    if (resp['status'] == "0") {
+      /*Toast.show(resp['message'], context,
+          duration: Toast.LENGTH_LONG, gravity: Toast.TOP);*/
+      EasyLoading.dismiss();
+    } else if (resp['status'] == "2") {
+      EasyLoading.dismiss();
+      SharedPreferences pref = await SharedPreferences.getInstance();
+      pref.setBool('isLoggedIn', true);
+      pref.setString("user_id", resp['user_id']);
+      pref.setString("full_name", resp['full_name']);
+      pref.setString("email", resp['email']);
+      pref.setString("contact", resp['contact']);
+      global.user_id = resp['user_id'];
+      global.fullname = resp['full_name'];
+      global.email = resp['email'];
+      global.contact = resp['contact'];
+
+      // SendPushNotification();
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => MainPage()));
+    } else {
+      EasyLoading.dismiss();
+      setState(() {
+        var resp = json.decode(res.body);
+        //print("USERRRRR_ID = "+resp['user_id']);
+        global.user_id = resp['user_id'] ?? "";
+        global.fullname = "Guest";
+        global.email = "";
+        global.contact = "";
+        /*print("Full_name " + global.fullname);
+      print("contact " + global.contact);
+      print("Email" + global.email);
+      print("User_id " + global.user_id);*/
+        pref.setString("user_id", resp['user_id']);
+        pref.setString("full_name", "Guest");
+        pref.setBool("isLoggedIn", true);
+        /* print(resp);*/
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => MainPage()),
+            (route) => false);
+      });
+    }
+  }
 
   Future<void> userLogin() async {
     configLoading();
@@ -197,6 +313,23 @@ class _LoginPageState extends State<LoginPage> {
                 child: Center(
                     child: Text(
                   "Login",
+                  style: GoogleFonts.nunito(fontSize: 17, color: Colors.white),
+                )),
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
+                SendPushNotification();
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                    color: HexColor(global.primary_color),
+                    borderRadius: BorderRadius.circular(10)),
+                margin: EdgeInsets.only(left: 30, right: 30, top: 200),
+                height: 50,
+                child: Center(
+                    child: Text(
+                  "Explore Store",
                   style: GoogleFonts.nunito(fontSize: 17, color: Colors.white),
                 )),
               ),
