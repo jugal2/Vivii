@@ -179,7 +179,9 @@ class _ProductListState extends State<ProductList> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => ProductDetails()));
+                              builder: (context) => ProductDetails(
+                                  product_id: product_data[index]
+                                      ['product_id'])));
                     },
                     child: Card(
                       semanticContainer: true,

@@ -45,34 +45,32 @@ void configLoading() {
 }
 
 class ProductDetails extends StatefulWidget {
-  const ProductDetails({Key? key}) : super(key: key);
+  const ProductDetails({Key? key, required this.product_id}) : super(key: key);
+  final String product_id;
 
   @override
   State<ProductDetails> createState() => _ProductDetailsState();
 }
 
 class _ProductDetailsState extends State<ProductDetails> {
-  var prod_name = "";
-  var prod_id = "";
-  var prod_sell_price = "";
-  var prod_desc = "";
-  var prod_img = "";
-  var prod_img_name = "";
-  var prod_in_cart = "";
-  var prod_cat_name = "";
-  var prod_ingredient_type = "";
-  var prod_price = "";
-  var prod_offer = "";
-  var prod_offer_price = "";
-  var prod_include_texes = "";
-  var prod_cat_id = "";
-  var real_resp;
-  var cart_item_resp;
-  var discount_per;
-  var prod_discount = 0;
-  var is_flagship;
   List imagedata = [];
   List slideimage = [];
+
+  var product_name = "";
+  var product_id = "";
+  var category_id = "";
+  var short_desc = "";
+  var long_desc = "";
+  var sell_price = "";
+  var price = "";
+  var prod_in_cart = "";
+  var offer_price = "";
+  var discount_percentage = "";
+  var category_name = "";
+  var image_path = "";
+  var product_image = "";
+  var show_offer = "";
+
   @override
   void initState() {
     super.initState();
@@ -80,20 +78,20 @@ class _ProductDetailsState extends State<ProductDetails> {
   }
 
   Future<dynamic> getSingleProd() async {
-    configLoading();
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    var user_id = pref.getString("user_id");
 
+    configLoading();
     EasyLoading.show(status: 'Loading...');
 
-    var res = await http.post(
-        Uri.parse(global.api_happick_url + "/get_single_product"),
-        headers: {
-          "Accept": "application/json"
-        },
-        body: {
-          "secrete": "dacb465d593bd139a6c28bb7289fa798",
-          "product_id": "10",
-          "user_id": "1",
-        });
+    var res = await http
+        .post(Uri.parse(global.api_base_url + "/get_single_product"), headers: {
+      "Accept": "application/json"
+    }, body: {
+      "secrete": "dacb465d593bd139a6c28bb7289fa798",
+      "product_id": widget.product_id,
+      "user_id": user_id,
+    });
 
     var resp = json.decode(res.body);
     if (resp['status'] == "0") {
@@ -107,32 +105,31 @@ class _ProductDetailsState extends State<ProductDetails> {
         var resp = json.decode(res.body)['product_image'];
         imagedata = resp;
         // print(data);
-        prod_name = data['product_name'];
-        prod_sell_price = data['sell_price'];
-        prod_desc = data['short_desc'];
-        prod_img = data['image_path'];
-        prod_img_name = resp[0]['product_image'];
+        product_name = data['product_name'];
+        sell_price = data['sell_price'];
+        short_desc = data['short_desc'];
+        long_desc = data['long_desc'];
+        product_image = data['image_path'];
         prod_in_cart = data['in_cart'];
-        prod_cat_name = data['category_name'];
-        prod_ingredient_type = data['ingredient_type'];
-        prod_price = data['price'];
-        prod_offer = data['show_offer'];
-        prod_id = data['product_id'];
-        prod_cat_id = data['category_id'];
-        discount_per = data['discount_percentage'];
-        prod_discount = data['discount_percentage'];
-        is_flagship = data['is_flagship'];
+        category_name = data['category_name'];
+        price = data['price'];
+        offer_price = data['offer_price'];
+        discount_percentage = data['discount_percentage'].toString();
+        product_id = data['product_id'];
+        category_id = data['category_id'];
+        //slideimage = json.decode(res.body)['product_image'];
         imagedata.forEach((element) {
           //slideimage.add(prod_img+element['product_image']);
-          slideimage.add(NetworkImage(prod_img + element['product_image']));
+          slideimage
+              .add(NetworkImage(product_image + element['product_image']));
         });
-        var in_cart = int.parse(prod_in_cart);
+        /*  var in_cart = int.parse(prod_in_cart);
         if (prod_offer == "true") {
-          prod_include_texes = '\u{20B9}' + prod_price;
+          prod_include_texes = '\u{20B9}' + sell_price;
           prod_offer_price = data['offer_price'];
         } else {
           prod_offer_price = "";
-        }
+        }*/
       });
     }
   }
@@ -176,10 +173,48 @@ class _ProductDetailsState extends State<ProductDetails> {
         physics: BouncingScrollPhysics(),
         shrinkWrap: true,
         children: [
+          CarouselSlider(
+            options: CarouselOptions(
+              autoPlay: true,
+              aspectRatio: 1,
+              enlargeCenterPage: true,
+              viewportFraction: 1,
+              autoPlayAnimationDuration: Duration(milliseconds: 1000),
+              autoPlayCurve: Curves.decelerate,
+            ),
+            items: imagedata.map((i) {
+              return Builder(
+                builder: (BuildContext context) {
+                  return Container(
+                      width: MediaQuery.of(context).size.width,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: GestureDetector(
+                          child: ClipRRect(
+                            child: FadeInImage.assetNetwork(
+                              placeholder: 'images/banner_placeholder.jpg',
+                              image: product_image + i['product_image'],
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          onTap: () {
+                            // print(i['category_id']);
+                            /*Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => ProdList(
+                                              categoryId:
+                                              i['category_id'])));*/
+                          }));
+                },
+              );
+            }).toList(),
+          ),
           Container(
             margin: EdgeInsets.only(left: 20, right: 20),
             child: Text(
-              prod_name,
+              product_name,
               style: GoogleFonts.nunito(
                 textStyle: TextStyle(color: Colors.black87, fontSize: 15),
               ),
@@ -188,7 +223,7 @@ class _ProductDetailsState extends State<ProductDetails> {
           Container(
             margin: EdgeInsets.only(left: 20, right: 20),
             child: Text(
-              prod_desc,
+              short_desc,
               style: GoogleFonts.nunito(
                 textStyle: TextStyle(color: Colors.black87, fontSize: 15),
               ),
@@ -199,7 +234,7 @@ class _ProductDetailsState extends State<ProductDetails> {
             child: Row(
               children: [
                 Text(
-                  ' \u{20B9}' + " " + prod_sell_price + "  ",
+                  ' \u{20B9}' + " " + sell_price + "  ",
                   style: GoogleFonts.nunito(
                     fontWeight: FontWeight.bold,
                     textStyle: TextStyle(fontSize: 13),
@@ -217,7 +252,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                       ),
                     ),
                     Text(
-                      prod_price,
+                      price,
                       style: GoogleFonts.nunito(
                         textStyle: TextStyle(
                             color: Colors.black87,
@@ -228,7 +263,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                   ],
                 ),
                 Text(
-                  "    " + discount_per.toString() + "% " + "off",
+                  "    " + discount_percentage.toString() + "% " + "off",
                   style: GoogleFonts.nunitoSans(
                       color: Colors.green,
                       fontWeight: FontWeight.bold,
