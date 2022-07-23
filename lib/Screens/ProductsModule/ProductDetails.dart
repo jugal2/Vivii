@@ -70,6 +70,7 @@ class _ProductDetailsState extends State<ProductDetails> {
   var image_path = "";
   var product_image = "";
   var show_offer = "";
+  var _current = 0;
 
   @override
   void initState() {
@@ -173,44 +174,104 @@ class _ProductDetailsState extends State<ProductDetails> {
         physics: BouncingScrollPhysics(),
         shrinkWrap: true,
         children: [
-          CarouselSlider(
-            options: CarouselOptions(
-              autoPlay: true,
-              aspectRatio: 1,
-              enlargeCenterPage: true,
-              viewportFraction: 1,
-              autoPlayAnimationDuration: Duration(milliseconds: 1000),
-              autoPlayCurve: Curves.decelerate,
-            ),
-            items: imagedata.map((i) {
-              return Builder(
-                builder: (BuildContext context) {
-                  return Container(
-                      width: MediaQuery.of(context).size.width,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: GestureDetector(
-                          child: ClipRRect(
-                            child: FadeInImage.assetNetwork(
-                              placeholder: 'images/banner_placeholder.jpg',
-                              image: product_image + i['product_image'],
-                              fit: BoxFit.cover,
-                            ),
-                          ),
+          Stack(
+            children: [
+              Center(
+                child: CarouselSlider(
+                  items: imagedata.map((i) {
+                    return Builder(
+                      builder: (BuildContext context) {
+                        return GestureDetector(
                           onTap: () {
-                            // print(i['category_id']);
                             /*Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => ProdList(
-                                              categoryId:
-                                              i['category_id'])));*/
-                          }));
-                },
-              );
-            }).toList(),
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ProductList()));*/
+                          },
+                          child: Container(
+                              child: FadedScaleAnimation(
+                                  child: Image.network(
+                            product_image + i['product_image'],
+                          ))),
+                        );
+                      },
+                    );
+                  }).toList(),
+                  options: CarouselOptions(
+                      autoPlay: false,
+                      viewportFraction: 1.0,
+                      enlargeCenterPage: false,
+                      onPageChanged: (index, reason) {
+                        setState(() {
+                          _current = index;
+                        });
+                      }),
+                ),
+              ),
+              Positioned.directional(
+                textDirection: Directionality.of(context),
+                start: 180.0,
+                bottom: 0.0,
+                child: Row(
+                  children: imagedata.map((i) {
+                    int index = imagedata.indexOf(i);
+                    return Container(
+                      width: 12.0,
+                      height: 3.0,
+                      margin:
+                          EdgeInsets.symmetric(vertical: 10, horizontal: 4.0),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.rectangle,
+                        color: _current == index
+                            ? Colors.black /*.withOpacity(0.9)*/
+                            : Colors.black.withOpacity(0.5),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+            ],
           ),
+          /* Container(
+            height: 300,
+            child: CarouselSlider(
+              options: CarouselOptions(
+                autoPlay: false,
+                aspectRatio: 1,
+                enlargeCenterPage: false,
+                viewportFraction: 1,
+                autoPlayAnimationDuration: Duration(milliseconds: 1000),
+                autoPlayCurve: Curves.bounceIn,
+              ),
+              items: imagedata.map((i) {
+                return Builder(
+                  builder: (BuildContext context) {
+                    return Container(
+                        width: MediaQuery.of(context).size.width,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: GestureDetector(
+                            child: ClipRRect(
+                              child: FadeInImage.assetNetwork(
+                                placeholder: 'images/banner_placeholder.jpg',
+                                image: product_image + i['product_image'],
+                              ),
+                            ),
+                            onTap: () {
+                              // print(i['category_id']);
+                              */ /*Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => ProdList(
+                                                categoryId:
+                                                i['category_id'])));*/ /*
+                            }));
+                  },
+                );
+              }).toList(),
+            ),
+          ),*/
           Container(
             margin: EdgeInsets.only(left: 20, right: 20),
             child: Text(
