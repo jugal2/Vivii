@@ -418,7 +418,7 @@ class _ProductDetailsState extends State<ProductDetails> {
             ),
           ),
           Container(
-            margin: EdgeInsets.only(),
+            margin: EdgeInsets.only(left: 20, right: 20),
             child: HtmlWidget(long_desc),
           ),
         ],
