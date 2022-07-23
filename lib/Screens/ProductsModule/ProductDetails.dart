@@ -189,18 +189,25 @@ class _ProductDetailsState extends State<ProductDetails> {
                                     builder: (context) => ProductList()));*/
                           },
                           child: Container(
+                              alignment: const Alignment(-9, 0),
                               child: FadedScaleAnimation(
                                   child: Image.network(
-                            product_image + i['product_image'],
-                          ))),
+                                product_image + i['product_image'],
+                                fit: BoxFit.fill,
+                              ))),
                         );
                       },
                     );
                   }).toList(),
                   options: CarouselOptions(
-                      autoPlay: false,
-                      viewportFraction: 1.0,
+                      scrollPhysics: BouncingScrollPhysics(),
+                      disableCenter: false,
+                      viewportFraction: 0.8,
                       enlargeCenterPage: false,
+                      height: 400,
+                      enableInfiniteScroll: false,
+                      initialPage: 0,
+                      enlargeStrategy: CenterPageEnlargeStrategy.height,
                       onPageChanged: (index, reason) {
                         setState(() {
                           _current = index;
@@ -232,46 +239,6 @@ class _ProductDetailsState extends State<ProductDetails> {
               ),
             ],
           ),
-          /* Container(
-            height: 300,
-            child: CarouselSlider(
-              options: CarouselOptions(
-                autoPlay: false,
-                aspectRatio: 1,
-                enlargeCenterPage: false,
-                viewportFraction: 1,
-                autoPlayAnimationDuration: Duration(milliseconds: 1000),
-                autoPlayCurve: Curves.bounceIn,
-              ),
-              items: imagedata.map((i) {
-                return Builder(
-                  builder: (BuildContext context) {
-                    return Container(
-                        width: MediaQuery.of(context).size.width,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: GestureDetector(
-                            child: ClipRRect(
-                              child: FadeInImage.assetNetwork(
-                                placeholder: 'images/banner_placeholder.jpg',
-                                image: product_image + i['product_image'],
-                              ),
-                            ),
-                            onTap: () {
-                              // print(i['category_id']);
-                              */ /*Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => ProdList(
-                                                categoryId:
-                                                i['category_id'])));*/ /*
-                            }));
-                  },
-                );
-              }).toList(),
-            ),
-          ),*/
           Container(
             margin: EdgeInsets.only(left: 20, right: 20),
             child: Text(
