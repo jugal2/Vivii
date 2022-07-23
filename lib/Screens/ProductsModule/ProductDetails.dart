@@ -4,7 +4,9 @@ import 'package:awesome_bottom_bar/awesome_bottom_bar.dart';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:iconsax/iconsax.dart';
@@ -49,7 +51,7 @@ class ProductDetails extends StatefulWidget {
   final String product_id;
 
   @override
-  State<ProductDetails> createState() => _ProductDetailsState();
+  State<ProductDetails> createState() => _ProductDetailsState(product_id);
 }
 
 class _ProductDetailsState extends State<ProductDetails> {
@@ -57,7 +59,7 @@ class _ProductDetailsState extends State<ProductDetails> {
   List slideimage = [];
 
   var product_name = "";
-  var product_id = "";
+  var product__id = "";
   var category_id = "";
   var short_desc = "";
   var long_desc = "";
@@ -69,9 +71,13 @@ class _ProductDetailsState extends State<ProductDetails> {
   var category_name = "";
   var image_path = "";
   var product_image = "";
+  List product_colors = [];
+  List product_size = [];
+
   var show_offer = "";
   var _current = 0;
-
+  var colorIndex = 0.obs;
+  var sizeIndex = 0.obs;
   @override
   void initState() {
     super.initState();
@@ -90,7 +96,7 @@ class _ProductDetailsState extends State<ProductDetails> {
       "Accept": "application/json"
     }, body: {
       "secrete": "dacb465d593bd139a6c28bb7289fa798",
-      "product_id": widget.product_id,
+      "product_id": product_id,
       "user_id": user_id,
     });
 
@@ -116,8 +122,10 @@ class _ProductDetailsState extends State<ProductDetails> {
         price = data['price'];
         offer_price = data['offer_price'];
         discount_percentage = data['discount_percentage'].toString();
-        product_id = data['product_id'];
+        product__id = data['product_id'];
         category_id = data['category_id'];
+        product_colors = json.decode(res.body)['colors'];
+        product_size = json.decode(res.body)['size'];
         //slideimage = json.decode(res.body)['product_image'];
         imagedata.forEach((element) {
           //slideimage.add(prod_img+element['product_image']);
@@ -134,6 +142,9 @@ class _ProductDetailsState extends State<ProductDetails> {
       });
     }
   }
+
+  String product_id;
+  _ProductDetailsState(this.product_id);
 
   @override
   Widget build(BuildContext context) {
@@ -189,12 +200,11 @@ class _ProductDetailsState extends State<ProductDetails> {
                                     builder: (context) => ProductList()));*/
                           },
                           child: Container(
-                              alignment: const Alignment(-9, 0),
                               child: FadedScaleAnimation(
                                   child: Image.network(
-                                product_image + i['product_image'],
-                                fit: BoxFit.fill,
-                              ))),
+                            product_image + i['product_image'],
+                            fit: BoxFit.fill,
+                          ))),
                         );
                       },
                     );
@@ -215,43 +225,29 @@ class _ProductDetailsState extends State<ProductDetails> {
                       }),
                 ),
               ),
-              Positioned.directional(
-                textDirection: Directionality.of(context),
-                start: 180.0,
-                bottom: 0.0,
-                child: Row(
-                  children: imagedata.map((i) {
-                    int index = imagedata.indexOf(i);
-                    return Container(
-                      width: 12.0,
-                      height: 3.0,
-                      margin:
-                          EdgeInsets.symmetric(vertical: 10, horizontal: 4.0),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.rectangle,
-                        color: _current == index
-                            ? Colors.black /*.withOpacity(0.9)*/
-                            : Colors.black.withOpacity(0.5),
-                      ),
-                    );
-                  }).toList(),
-                ),
-              ),
             ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: imagedata.map((i) {
+              int index = imagedata.indexOf(i);
+              return Container(
+                width: 12.0,
+                height: 3.0,
+                margin: EdgeInsets.symmetric(vertical: 10, horizontal: 4.0),
+                decoration: BoxDecoration(
+                  shape: BoxShape.rectangle,
+                  color: _current == index
+                      ? Colors.black /*.withOpacity(0.9)*/
+                      : Colors.black.withOpacity(0.5),
+                ),
+              );
+            }).toList(),
           ),
           Container(
             margin: EdgeInsets.only(left: 20, right: 20),
             child: Text(
               product_name,
-              style: GoogleFonts.nunito(
-                textStyle: TextStyle(color: Colors.black87, fontSize: 15),
-              ),
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.only(left: 20, right: 20),
-            child: Text(
-              short_desc,
               style: GoogleFonts.nunito(
                 textStyle: TextStyle(color: Colors.black87, fontSize: 15),
               ),
@@ -308,6 +304,122 @@ class _ProductDetailsState extends State<ProductDetails> {
                 textStyle: TextStyle(color: Colors.black87, fontSize: 9),
               ),
             ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              children: [
+                Text(
+                  "Select Color",
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                    letterSpacing: 0.3,
+                    color: Colors.grey.shade600,
+                  ),
+                ),
+                const Spacer(),
+                ...List.generate(
+                  product_colors.length,
+                  (index) => GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        sizeIndex = 0.obs;
+                        product_id = product_colors[index]['product_id'];
+                      });
+                      print(product_id);
+                      getSingleProd();
+                    },
+                    child: Container(
+                      height: 33,
+                      width: 33,
+                      padding: const EdgeInsets.all(3),
+                      margin: const EdgeInsets.only(right: 5),
+                      decoration: colorIndex.value == index
+                          ? BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: HexColor(product_colors[index]['color']),
+                              ))
+                          : null,
+                      child: Container(
+                        height: 25,
+                        width: 25,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: HexColor(product_colors[index]['color']),
+                        ),
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            child: Row(
+              children: [
+                Text(
+                  "Select Size",
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                    letterSpacing: 0.3,
+                    color: Colors.grey.shade600,
+                  ),
+                ),
+                const Spacer(),
+                ...List.generate(
+                  product_size.length,
+                  (index) => GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        sizeIndex.value = index;
+                      });
+
+                      print(sizeIndex.value);
+                      print(index);
+                    },
+                    child: Container(
+                      height: 40,
+                      width: 40,
+                      padding: const EdgeInsets.all(3),
+                      margin: const EdgeInsets.only(right: 5),
+                      decoration: sizeIndex.value == index
+                          ? BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: Colors.black87,
+                              ))
+                          : null,
+                      child: Container(
+                        child: Center(child: Text(product_size[index]['size'])),
+                        height: 25,
+                        width: 25,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.only(left: 20, right: 20),
+            child: Text(
+              short_desc,
+              style: GoogleFonts.nunito(
+                textStyle: TextStyle(color: Colors.black87, fontSize: 15),
+              ),
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.only(),
+            child: HtmlWidget(long_desc),
           ),
         ],
       ),
